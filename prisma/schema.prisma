@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator typegraphql {
+  provider = "typegraphql-prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id                                  Int                 @id @default(autoincrement())
+  typeId                              Int                 @default(1)
+  name                                String              @db.VarChar(50)
+  email                               String              @unique(map: "email") @db.VarChar(50)
+  pass                                String              @db.VarChar(50)
+  address                             String?             @db.VarChar(500)
+  contact                             String?             @db.VarChar(500)
+  photoUrl                            String?             @db.VarChar(100)
+  artworks                            artworks[]
+  comments                            comments[]
+  favoritesArtworks                   favoritesArtworks[]
+  followers_followers_artistIdTousers followers[]         @relation("followers_artistIdTousers")
+  followers_followers_userIdTousers   followers[]         @relation("followers_userIdTousers")
+}
+
+model artworks {
+  id                Int                 @id @default(autoincrement())
+  artistId          Int
+  title             String              @db.VarChar(50)
+  description       String              @db.VarChar(5000)
+  imageUrl          String?             @db.VarChar(100)
+  publicationDate   DateTime?           @default(now()) @db.Date
+  categories        String?             @db.LongText
+  users             users               @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworks_ibfk_1")
+  comments          comments[]
+  favoritesArtworks favoritesArtworks[]
+
+  @@index([artistId], map: "artistId")
+}
+
+model comments {
+  id          Int       @id @default(autoincrement())
+  artworkId   Int
+  userId      Int
+  comment     String    @db.VarChar(500)
+  postingDate DateTime? @default(now()) @db.Date
+  artworks    artworks  @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "comments_ibfk_1")
+  users       users     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "comments_ibfk_2")
+
+  @@index([artworkId], map: "artworkId")
+  @@index([userId], map: "userId")
+}
+
+model favoritesArtworks {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  artworkId   Int
+  createdDate DateTime? @default(now()) @db.Date
+  artworks    artworks  @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "favoritesartworks_ibfk_2")
+  users       users     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "favoritesartworks_ibfk_1")
+
+  @@index([artworkId], map: "artworkId")
+  @@index([userId], map: "userId")
+}
+
+model followers {
+  id                              Int       @id @default(autoincrement())
+  userId                          Int
+  artistId                        Int
+  createdDate                     DateTime? @default(now()) @db.Date
+  users_followers_artistIdTousers users     @relation("followers_artistIdTousers", fields: [artistId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "followers_ibfk_2")
+  users_followers_userIdTousers   users     @relation("followers_userIdTousers", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "followers_ibfk_1")
+
+  @@index([artistId], map: "artistId")
+  @@index([userId], map: "userId")
+}
