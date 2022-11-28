@@ -12,69 +12,250 @@ datasource db {
 }
 
 model users {
-  id                                  Int                 @id @default(autoincrement())
-  typeId                              Int                 @default(1)
-  name                                String              @db.VarChar(50)
-  email                               String              @unique(map: "email") @db.VarChar(50)
-  pass                                String              @db.VarChar(50)
-  address                             String?             @db.VarChar(500)
-  contact                             String?             @db.VarChar(500)
-  photoUrl                            String?             @db.VarChar(100)
-  artworks                            artworks[]
-  comments                            comments[]
-  favoritesArtworks                   favoritesArtworks[]
-  followers_followers_artistIdTousers followers[]         @relation("followers_artistIdTousers")
-  followers_followers_userIdTousers   followers[]         @relation("followers_userIdTousers")
+  id                                           Int                     @id @default(autoincrement())
+  typeId                                       Int                     @default(1)
+  firstName                                    String                  @db.VarChar(50)
+  lastName                                     String                  @db.VarChar(50)
+  email                                        String                  @unique(map: "email") @db.VarChar(60)
+  pass                                         String                  @db.VarChar(60)
+  phone                                        String?                 @db.VarChar(20)
+  gender                                       String?                 @db.VarChar(15)
+  birthdate                                    DateTime?               @db.Date
+  address                                      String?                 @db.VarChar(500)
+  contact                                      String?                 @db.VarChar(500)
+  photoUrl                                     String?                 @db.VarChar(100)
+  googleUid                                    String?                 @db.VarChar(100)
+  facebookUid                                  String?                 @db.VarChar(100)
+  firebaseToken                                String?                 @db.VarChar(200)
+  createdDate                                  DateTime?               @db.Date
+  deletedDate                                  DateTime?               @db.Date
+  isDeleted                                    Boolean?                @default(false)
+  artworks                                     artworks[]
+  artworksCollaborators                        artworksCollaborators[]
+  collections                                  collections[]
+  comments_comments_commentatorIdTousers       comments[]              @relation("comments_commentatorIdTousers")
+  comments_commentsTousers                     comments[]
+  commentsLikes                                commentsLikes[]
+  favoritesArtworks                            favoritesArtworks[]
+  followers                                    followers[]             @relation("followers_followerIdTousers")
+  followers_followers_userIdTousers            followers[]             @relation("followers_userIdTousers")
+  notifications                                notifications[]
+  reports_reports_reporterIdTousers            reports[]               @relation("reports_reporterIdTousers")
+  reports_reports_userIdTousers                reports[]               @relation("reports_userIdTousers")
+  usersRatings_usersTousersRatings_userId      usersRatings[]          @relation("usersTousersRatings_userId")
+  usersRatings_usersTousersRatings_qualifierId usersRatings[]          @relation("usersTousersRatings_qualifierId")
 }
 
 model artworks {
-  id                Int                 @id @default(autoincrement())
-  artistId          Int
-  title             String              @db.VarChar(50)
-  description       String              @db.VarChar(5000)
-  imageUrl          String?             @db.VarChar(100)
-  publicationDate   DateTime?           @default(now()) @db.Date
-  categories        String?             @db.LongText
-  users             users               @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworks_ibfk_1")
-  comments          comments[]
-  favoritesArtworks favoritesArtworks[]
+  id                    Int                     @id @default(autoincrement())
+  artistId              Int
+  title                 String                  @db.VarChar(50)
+  description           String?                 @db.VarChar(5000)
+  imageUrl              String?                 @db.VarChar(100)
+  minWorkingHours       Int?
+  maxWorkingHours       Int?
+  minPrice              Float?                  @db.Float
+  maxPrice              Float?                  @db.Float
+  minHeight             Float?                  @db.Float
+  maxHeight             Float?                  @db.Float
+  minWidth              Float?                  @db.Float
+  maxWidth              Float?                  @db.Float
+  createdDate           DateTime?               @db.Date
+  deletedDate           DateTime?               @db.Date
+  isDeleted             Boolean?                @default(false)
+  users                 users                   @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworks_ibfk_1")
+  artworkCollections    artworkCollections[]
+  artworksAddresses     artworksAddresses[]
+  artworksCollaborators artworksCollaborators[]
+  artworksColors        artworksColors[]
+  artworksMaterials     artworksMaterials[]
+  artworksMovements     artworksMovements[]
+  artworksTags          artworksTags[]
+  comments              comments[]
+  favoritesArtworks     favoritesArtworks[]
+  reports               reports[]
 
   @@index([artistId], map: "artistId")
 }
 
 model comments {
-  id          Int       @id @default(autoincrement())
-  artworkId   Int
-  userId      Int
-  comment     String    @db.VarChar(500)
-  postingDate DateTime? @default(now()) @db.Date
-  artworks    artworks  @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "comments_ibfk_1")
-  users       users     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "comments_ibfk_2")
+  id                                  Int             @id @default(autoincrement())
+  commentatorId                       Int
+  comment                             String          @db.VarChar(500)
+  userId                              Int?
+  artworkId                           Int?
+  commentId                           Int?
+  createdDate                         DateTime?       @db.Date
+  users_comments_commentatorIdTousers users           @relation("comments_commentatorIdTousers", fields: [commentatorId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "comments_ibfk_1")
+  users_commentsTousers               users?          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "comments_ibfk_2")
+  artworks                            artworks?       @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "comments_ibfk_3")
+  comments                            comments?       @relation("commentsTocomments", fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "comments_ibfk_4")
+  other_comments                      comments[]      @relation("commentsTocomments")
+  commentsLikes                       commentsLikes[]
+  reports                             reports[]
 
   @@index([artworkId], map: "artworkId")
   @@index([userId], map: "userId")
+  @@index([commentId], map: "commentId")
+  @@index([commentatorId], map: "commentatorId")
 }
 
 model favoritesArtworks {
   id          Int       @id @default(autoincrement())
   userId      Int
   artworkId   Int
-  createdDate DateTime? @default(now()) @db.Date
-  artworks    artworks  @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "favoritesartworks_ibfk_2")
+  createdDate DateTime? @db.Date
   users       users     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "favoritesartworks_ibfk_1")
+  artworks    artworks  @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "favoritesartworks_ibfk_2")
 
   @@index([artworkId], map: "artworkId")
   @@index([userId], map: "userId")
 }
 
 model followers {
-  id                              Int       @id @default(autoincrement())
-  userId                          Int
-  artistId                        Int
-  createdDate                     DateTime? @default(now()) @db.Date
-  users_followers_artistIdTousers users     @relation("followers_artistIdTousers", fields: [artistId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "followers_ibfk_2")
-  users_followers_userIdTousers   users     @relation("followers_userIdTousers", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "followers_ibfk_1")
+  id                            Int       @id @default(autoincrement())
+  followerId                    Int
+  userId                        Int
+  createdDate                   DateTime? @db.Date
+  users                         users     @relation("followers_followerIdTousers", fields: [followerId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "followers_ibfk_1")
+  users_followers_userIdTousers users     @relation("followers_userIdTousers", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "followers_ibfk_2")
+
+  @@index([userId], map: "userId")
+  @@index([followerId], map: "followerId")
+}
+
+model collections {
+  id                 Int                  @id @default(autoincrement())
+  userId             Int
+  name               String               @db.VarChar(500)
+  imageUrl           String?              @db.VarChar(100)
+  createdDate        DateTime?            @db.Date
+  users              users                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "collections_ibfk_1")
+  artworkCollections artworkCollections[]
+
+  @@index([userId], map: "userId")
+}
+
+model commentsLikes {
+  id        Int      @id @default(autoincrement())
+  commentId Int
+  userId    Int
+  positive  Boolean?
+  comments  comments @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "commentslikes_ibfk_1")
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "commentslikes_ibfk_2")
+
+  @@index([commentId], map: "commentId")
+  @@index([userId], map: "userId")
+}
+
+model artworksAddresses {
+  id        Int      @id @default(autoincrement())
+  artworkId Int
+  address   String?  @db.VarChar(500)
+  artworks  artworks @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworksaddresses_ibfk_1")
+
+  @@index([artworkId], map: "artworkId")
+}
+
+model artworksCollaborators {
+  id        Int      @id @default(autoincrement())
+  artistId  Int
+  artworkId Int
+  artworks  artworks @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworkscollaborators_ibfk_1")
+  users     users    @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworkscollaborators_ibfk_2")
 
   @@index([artistId], map: "artistId")
+  @@index([artworkId], map: "artworkId")
+}
+
+model artworksColors {
+  id        Int      @id @default(autoincrement())
+  artworkId Int
+  color     String   @db.VarChar(10)
+  artworks  artworks @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworkscolors_ibfk_1")
+
+  @@index([artworkId], map: "artworkId")
+}
+
+model artworksMaterials {
+  id        Int      @id @default(autoincrement())
+  artworkId Int
+  material  String   @db.VarChar(50)
+  artworks  artworks @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworksmaterials_ibfk_1")
+
+  @@index([artworkId], map: "artworkId")
+}
+
+model artworksMovements {
+  id        Int      @id @default(autoincrement())
+  artworkId Int
+  movement  String   @db.VarChar(50)
+  artworks  artworks @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworksmovements_ibfk_1")
+
+  @@index([artworkId], map: "artworkId")
+}
+
+model artworksTags {
+  id        Int      @id @default(autoincrement())
+  artworkId Int
+  tag       String?  @db.VarChar(50)
+  artworks  artworks @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworkstags_ibfk_1")
+
+  @@index([artworkId], map: "artworkId")
+}
+
+model notifications {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  typeId      Int
+  title       String?   @db.VarChar(100)
+  content     String?   @db.VarChar(300)
+  link        String?   @db.VarChar(100)
+  createdDate DateTime? @db.Date
+  viewed      Boolean?  @default(false)
+  users       users     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "notifications_ibfk_1")
+
+  @@index([userId], map: "userId")
+}
+
+model usersRatings {
+  id                                    Int   @id @default(autoincrement())
+  userId                                Int
+  qualifierId                           Int
+  rating                                Int?
+  users_usersTousersRatings_userId      users @relation("usersTousersRatings_userId", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "usersratings_ibfk_1")
+  users_usersTousersRatings_qualifierId users @relation("usersTousersRatings_qualifierId", fields: [qualifierId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "usersratings_ibfk_2")
+
+  @@index([qualifierId], map: "qualifierId")
+  @@index([userId], map: "userId")
+}
+
+model artworkCollections {
+  id           Int         @id @default(autoincrement())
+  collectionId Int
+  artworkId    Int
+  collections  collections @relation(fields: [collectionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworkcollections_ibfk_1")
+  artworks     artworks    @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworkcollections_ibfk_2")
+
+  @@index([artworkId], map: "artworkId")
+  @@index([collectionId], map: "collectionId")
+}
+
+model reports {
+  id                              Int       @id @default(autoincrement())
+  reporterId                      Int
+  description                     String    @db.VarChar(5000)
+  userId                          Int?
+  artworkId                       Int?
+  commentId                       Int?
+  createdDate                     DateTime? @db.Date
+  users_reports_reporterIdTousers users     @relation("reports_reporterIdTousers", fields: [reporterId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "reports_ibfk_1")
+  users_reports_userIdTousers     users?    @relation("reports_userIdTousers", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "reports_ibfk_2")
+  artworks                        artworks? @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "reports_ibfk_3")
+  comments                        comments? @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "reports_ibfk_4")
+
+  @@index([artworkId], map: "artworkId")
+  @@index([commentId], map: "commentId")
+  @@index([reporterId], map: "reporterId")
   @@index([userId], map: "userId")
 }

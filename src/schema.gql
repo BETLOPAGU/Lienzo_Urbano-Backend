@@ -1,0 +1,933 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Artwork {
+  """ID from the artwork"""
+  id: Int!
+
+  """ID from the artist"""
+  artistId: Int!
+
+  """Title of the artwork"""
+  title: String!
+
+  """Description of the artwork"""
+  description: String
+
+  """URL from the AWS S3 where is stored the artwork image"""
+  imageUrl: String
+
+  """Minimum working hours to complete the artwork"""
+  minWorkingHours: Int
+
+  """Maximum working hours to complete the artwork"""
+  maxWorkingHours: Int
+
+  """Minimum price for the artwork"""
+  minPrice: Float
+
+  """Maximum price for the artwork"""
+  maxPrice: Float
+
+  """Minimum height required to do the artwork"""
+  minHeight: Float
+
+  """Maximum height allowed to do the artwork"""
+  maxHeight: Float
+
+  """Minimum width required to do the artwork"""
+  minWidth: Float
+
+  """Maximum width allowed to do the artwork"""
+  maxWidth: Float
+
+  """Publication date of the artwork"""
+  createdDate: DateTime
+
+  """Date of deletion of the artwork"""
+  deletedDate: DateTime
+
+  """Boolean to know if the artwork is soft deleted"""
+  isDeleted: Boolean
+  favoriteCount: Int!
+  collaborators: [ArtworkCollaborator!]!
+  tags: [ArtworkTag!]!
+  addresses: [ArtworkAddress!]!
+  colors: [ArtworkColor!]!
+  movements: [ArtworkMovement!]!
+  materials: [ArtworkMaterial!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type FavoriteArtwork {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """ID from the user"""
+  userId: Int!
+
+  """Date of creation of the record"""
+  createdDate: DateTime!
+}
+
+type ArtworkCollaborator {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artist"""
+  artistId: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+}
+
+type ArtworkTag {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Tag assigned to the artwork"""
+  tag: String!
+}
+
+type ArtworkAddress {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Address from the artwork"""
+  address: String!
+}
+
+type ArtworkColor {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Color contained on the artwork"""
+  color: String!
+}
+
+type ArtworkMovement {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Movement from the artwork"""
+  movement: String!
+}
+
+type ArtworkMaterial {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Material from the artwork"""
+  material: String!
+}
+
+type User {
+  """ID from the user"""
+  id: Int!
+
+  """Type ID from the user"""
+  typeId: UserTypes!
+
+  """First name from the user"""
+  firstName: String!
+
+  """Last name from the user"""
+  lastName: String!
+
+  """Email address from the user"""
+  email: String!
+
+  """Auth password from the user"""
+  pass: String!
+
+  """Phone number from the user"""
+  phone: String
+
+  """Gender from the user"""
+  gender: String
+
+  """Birthdate of the user"""
+  birthdate: DateTime
+
+  """Home address from the user"""
+  address: String
+
+  """Contact information from the user"""
+  contact: String
+
+  """URL from the AWS S3 where is stored the user photo"""
+  photoUrl: String
+
+  """Google UID for auth"""
+  googleUid: String
+
+  """Facebook UID for auth"""
+  facebookUid: String
+
+  """Firebase token"""
+  firebaseToken: String
+
+  """Registration date of the user"""
+  createdDate: DateTime
+
+  """Date of deletion of the user"""
+  deletedDate: DateTime
+
+  """Boolean to know if the user is soft deleted"""
+  isDeleted: Boolean
+  rating: Float!
+  followers: [Follower!]!
+  followersCount: Int!
+  collections: [Collection!]!
+}
+
+"""User types supported"""
+enum UserTypes {
+  GUEST
+  ARTIST
+  ADMIN
+}
+
+type UserRating {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the user"""
+  userId: Int!
+
+  """ID from the qualifier"""
+  qualifierId: Int!
+
+  """Assigned rating"""
+  rating: Int!
+}
+
+type Follower {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the user"""
+  userId: Int!
+
+  """ID from the follower"""
+  followerId: Int!
+
+  """Date of creation of the record"""
+  createdDate: DateTime!
+}
+
+type Collection {
+  """ID from the collection"""
+  id: Int!
+
+  """ID from the user"""
+  userId: Int!
+
+  """Name of the collection"""
+  name: String!
+
+  """URL from the AWS S3 where is stored the image"""
+  imageUrl: String
+
+  """Creation date of the record"""
+  createdDate: DateTime
+  artworks: [Artwork!]!
+}
+
+type AuthResponse {
+  token: String!
+  user: User!
+}
+
+type ArtworkCollection {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """ID from the collection"""
+  collectionId: Int!
+}
+
+type Comment {
+  """ID from the comment"""
+  id: Int!
+
+  """ID from the user that created the comment"""
+  commentatorId: Int!
+
+  """Comment body"""
+  comment: String!
+
+  """ID from the user that is being commented"""
+  userId: Int
+
+  """ID from the artwork that is being commented"""
+  artworkId: Int
+
+  """ID from the comment that is being commented"""
+  commentId: Int
+
+  """Creation date of the record"""
+  createdDate: DateTime
+}
+
+type Report {
+  """ID from the report"""
+  id: Int!
+
+  """ID from the user that created the report"""
+  reporterId: Int!
+
+  """Report description"""
+  description: String!
+
+  """ID from the user that is being reported"""
+  userId: Int
+
+  """ID from the artwork that is being reported"""
+  artworkId: Int
+
+  """ID from the comment that is being reported"""
+  commentId: Int
+
+  """Creation date of the record"""
+  createdDate: DateTime
+}
+
+input ArtworkInput {
+  """ID from the artwork"""
+  id: Int!
+
+  """ID from the artist"""
+  artistId: Int!
+
+  """Title of the artwork"""
+  title: String!
+
+  """Description of the artwork"""
+  description: String
+
+  """URL from the AWS S3 where is stored the artwork image"""
+  imageUrl: String
+
+  """Minimum working hours to complete the artwork"""
+  minWorkingHours: Int
+
+  """Maximum working hours to complete the artwork"""
+  maxWorkingHours: Int
+
+  """Minimum price for the artwork"""
+  minPrice: Float
+
+  """Maximum price for the artwork"""
+  maxPrice: Float
+
+  """Minimum height required to do the artwork"""
+  minHeight: Float
+
+  """Maximum height allowed to do the artwork"""
+  maxHeight: Float
+
+  """Minimum width required to do the artwork"""
+  minWidth: Float
+
+  """Maximum width allowed to do the artwork"""
+  maxWidth: Float
+
+  """Publication date of the artwork"""
+  createdDate: DateTime
+
+  """Date of deletion of the artwork"""
+  deletedDate: DateTime
+
+  """Boolean to know if the artwork is soft deleted"""
+  isDeleted: Boolean
+}
+
+input UserType {
+  """ID from the user"""
+  id: Int!
+
+  """Type ID from the user"""
+  typeId: UserTypes!
+
+  """First name from the user"""
+  firstName: String!
+
+  """Last name from the user"""
+  lastName: String!
+
+  """Email address from the user"""
+  email: String!
+
+  """Auth password from the user"""
+  pass: String!
+
+  """Phone number from the user"""
+  phone: String
+
+  """Gender from the user"""
+  gender: String
+
+  """Birthdate of the user"""
+  birthdate: DateTime
+
+  """Home address from the user"""
+  address: String
+
+  """Contact information from the user"""
+  contact: String
+
+  """URL from the AWS S3 where is stored the user photo"""
+  photoUrl: String
+
+  """Google UID for auth"""
+  googleUid: String
+
+  """Facebook UID for auth"""
+  facebookUid: String
+
+  """Firebase token"""
+  firebaseToken: String
+
+  """Registration date of the user"""
+  createdDate: DateTime
+
+  """Date of deletion of the user"""
+  deletedDate: DateTime
+
+  """Boolean to know if the user is soft deleted"""
+  isDeleted: Boolean
+}
+
+input CollectionInput {
+  """ID from the collection"""
+  id: Int!
+
+  """ID from the user"""
+  userId: Int!
+
+  """Name of the collection"""
+  name: String!
+
+  """URL from the AWS S3 where is stored the image"""
+  imageUrl: String
+
+  """Creation date of the record"""
+  createdDate: DateTime
+}
+
+input CommentInput {
+  """ID from the comment"""
+  id: Int!
+
+  """ID from the user that created the comment"""
+  commentatorId: Int!
+
+  """Comment body"""
+  comment: String!
+
+  """ID from the user that is being commented"""
+  userId: Int
+
+  """ID from the artwork that is being commented"""
+  artworkId: Int
+
+  """ID from the comment that is being commented"""
+  commentId: Int
+
+  """Creation date of the record"""
+  createdDate: DateTime
+}
+
+input ReportInput {
+  """ID from the report"""
+  id: Int!
+
+  """ID from the user that created the report"""
+  reporterId: Int!
+
+  """Report description"""
+  description: String!
+
+  """ID from the user that is being reported"""
+  userId: Int
+
+  """ID from the artwork that is being reported"""
+  artworkId: Int
+
+  """ID from the comment that is being reported"""
+  commentId: Int
+
+  """Creation date of the record"""
+  createdDate: DateTime
+}
+
+type Query {
+  artworks(filters: FindArtworksInput): [Artwork!]!
+  artwork(id: Int!): Artwork
+  users(filters: FindUsersInput): [User!]!
+  user(id: Int!): User
+  login(loginInput: LoginInput!): AuthResponse!
+  comments(userId: Int, artworkId: Int, commentId: Int): [Comment!]!
+  reports(userId: Int, artworkId: Int, commentId: Int): [Report!]!
+}
+
+input FindArtworksInput {
+  """ID from the artwork"""
+  id: Int
+
+  """ID from the artist"""
+  artistId: Int
+
+  """Title of the artwork"""
+  title: String
+
+  """Description of the artwork"""
+  description: String
+
+  """URL from the AWS S3 where is stored the artwork image"""
+  imageUrl: String
+
+  """Minimum working hours to complete the artwork"""
+  minWorkingHours: Int
+
+  """Maximum working hours to complete the artwork"""
+  maxWorkingHours: Int
+
+  """Minimum price for the artwork"""
+  minPrice: Float
+
+  """Maximum price for the artwork"""
+  maxPrice: Float
+
+  """Minimum height required to do the artwork"""
+  minHeight: Float
+
+  """Maximum height allowed to do the artwork"""
+  maxHeight: Float
+
+  """Minimum width required to do the artwork"""
+  minWidth: Float
+
+  """Maximum width allowed to do the artwork"""
+  maxWidth: Float
+
+  """Publication date of the artwork"""
+  createdDate: DateTime
+
+  """Date of deletion of the artwork"""
+  deletedDate: DateTime
+
+  """Boolean to know if the artwork is soft deleted"""
+  isDeleted: Boolean
+}
+
+input FindUsersInput {
+  """ID from the user"""
+  id: Int
+
+  """Type ID from the user"""
+  typeId: UserTypes
+
+  """First name from the user"""
+  firstName: String
+
+  """Last name from the user"""
+  lastName: String
+
+  """Email address from the user"""
+  email: String
+
+  """Auth password from the user"""
+  pass: String
+
+  """Phone number from the user"""
+  phone: String
+
+  """Gender from the user"""
+  gender: String
+
+  """Birthdate of the user"""
+  birthdate: DateTime
+
+  """Home address from the user"""
+  address: String
+
+  """Contact information from the user"""
+  contact: String
+
+  """URL from the AWS S3 where is stored the user photo"""
+  photoUrl: String
+
+  """Google UID for auth"""
+  googleUid: String
+
+  """Facebook UID for auth"""
+  facebookUid: String
+
+  """Firebase token"""
+  firebaseToken: String
+
+  """Registration date of the user"""
+  createdDate: DateTime
+
+  """Date of deletion of the user"""
+  deletedDate: DateTime
+
+  """Boolean to know if the user is soft deleted"""
+  isDeleted: Boolean
+}
+
+input LoginInput {
+  """Email address from the user"""
+  email: String!
+
+  """Auth password from the user"""
+  pass: String!
+}
+
+type Mutation {
+  createArtwork(createArtworkInput: CreateArtworkInput!): Artwork!
+  updateArtwork(updateArtworkInput: UpdateArtworkInput!): Artwork!
+  removeArtwork(id: Int!): Artwork!
+  markUnmarkFavoriteArtwork(id: Int!): FavoriteArtwork!
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  removeUser(id: Int!): User!
+  rateUser(id: Int!, rating: Int!): UserRating!
+  followUnfollowUser(id: Int!): Follower!
+
+  """Method to auto generate test data"""
+  runSeed: Boolean!
+  createCollection(createCollectionInput: CreateCollectionInput!): Collection!
+  updateCollection(updateCollectionInput: UpdateCollectionInput!): Collection!
+  removeCollection(id: Int!): Collection!
+  addRemoveArtworkFromCollection(collectionId: Int!, artworkId: Int!): ArtworkCollection!
+  createComment(createCommentInput: CreateCommentInput!): Comment!
+  updateComment(id: Int!, comment: String!): Comment!
+  removeComment(id: Int!): Comment!
+  createReport(createReportInput: CreateReportInput!): Report!
+  updateReport(id: Int!, description: String!): Report!
+  removeReport(id: Int!): Report!
+}
+
+input CreateArtworkInput {
+  """Title of the artwork"""
+  title: String!
+
+  """Description of the artwork"""
+  description: String
+
+  """URL from the AWS S3 where is stored the artwork image"""
+  imageUrl: String
+
+  """Minimum working hours to complete the artwork"""
+  minWorkingHours: Int
+
+  """Maximum working hours to complete the artwork"""
+  maxWorkingHours: Int
+
+  """Minimum price for the artwork"""
+  minPrice: Float
+
+  """Maximum price for the artwork"""
+  maxPrice: Float
+
+  """Minimum height required to do the artwork"""
+  minHeight: Float
+
+  """Maximum height allowed to do the artwork"""
+  maxHeight: Float
+
+  """Minimum width required to do the artwork"""
+  minWidth: Float
+
+  """Maximum width allowed to do the artwork"""
+  maxWidth: Float
+
+  """Publication date of the artwork"""
+  createdDate: DateTime
+
+  """Date of deletion of the artwork"""
+  deletedDate: DateTime
+
+  """Boolean to know if the artwork is soft deleted"""
+  isDeleted: Boolean
+
+  """List of collaborators artists"""
+  collaborators: [Int!]
+
+  """List of tags from the artwork"""
+  tags: [String!]
+
+  """List of addresses from the artwork"""
+  addresses: [String!]
+
+  """List of colors from the artwork"""
+  colors: [String!]
+
+  """List of artistic movements from the artwork"""
+  movements: [String!]
+
+  """List of materials from the artwork"""
+  materials: [String!]
+}
+
+input UpdateArtworkInput {
+  """Title of the artwork"""
+  title: String
+
+  """Description of the artwork"""
+  description: String
+
+  """URL from the AWS S3 where is stored the artwork image"""
+  imageUrl: String
+
+  """Minimum working hours to complete the artwork"""
+  minWorkingHours: Int
+
+  """Maximum working hours to complete the artwork"""
+  maxWorkingHours: Int
+
+  """Minimum price for the artwork"""
+  minPrice: Float
+
+  """Maximum price for the artwork"""
+  maxPrice: Float
+
+  """Minimum height required to do the artwork"""
+  minHeight: Float
+
+  """Maximum height allowed to do the artwork"""
+  maxHeight: Float
+
+  """Minimum width required to do the artwork"""
+  minWidth: Float
+
+  """Maximum width allowed to do the artwork"""
+  maxWidth: Float
+
+  """Publication date of the artwork"""
+  createdDate: DateTime
+
+  """Date of deletion of the artwork"""
+  deletedDate: DateTime
+
+  """Boolean to know if the artwork is soft deleted"""
+  isDeleted: Boolean
+
+  """List of collaborators artists"""
+  collaborators: [Int!]
+
+  """List of tags from the artwork"""
+  tags: [String!]
+
+  """List of addresses from the artwork"""
+  addresses: [String!]
+
+  """List of colors from the artwork"""
+  colors: [String!]
+
+  """List of artistic movements from the artwork"""
+  movements: [String!]
+
+  """List of materials from the artwork"""
+  materials: [String!]
+
+  """ID from the artwork to update"""
+  id: Int!
+}
+
+input CreateUserInput {
+  """Type ID from the user"""
+  typeId: UserTypes!
+
+  """First name from the user"""
+  firstName: String!
+
+  """Last name from the user"""
+  lastName: String!
+
+  """Email address from the user"""
+  email: String!
+
+  """Auth password from the user"""
+  pass: String!
+
+  """Phone number from the user"""
+  phone: String
+
+  """Gender from the user"""
+  gender: String
+
+  """Birthdate of the user"""
+  birthdate: DateTime
+
+  """Home address from the user"""
+  address: String
+
+  """Contact information from the user"""
+  contact: String
+
+  """URL from the AWS S3 where is stored the user photo"""
+  photoUrl: String
+
+  """Google UID for auth"""
+  googleUid: String
+
+  """Facebook UID for auth"""
+  facebookUid: String
+
+  """Firebase token"""
+  firebaseToken: String
+
+  """Registration date of the user"""
+  createdDate: DateTime
+
+  """Date of deletion of the user"""
+  deletedDate: DateTime
+
+  """Boolean to know if the user is soft deleted"""
+  isDeleted: Boolean
+}
+
+input UpdateUserInput {
+  """Type ID from the user"""
+  typeId: UserTypes
+
+  """First name from the user"""
+  firstName: String
+
+  """Last name from the user"""
+  lastName: String
+
+  """Email address from the user"""
+  email: String
+
+  """Auth password from the user"""
+  pass: String
+
+  """Phone number from the user"""
+  phone: String
+
+  """Gender from the user"""
+  gender: String
+
+  """Birthdate of the user"""
+  birthdate: DateTime
+
+  """Home address from the user"""
+  address: String
+
+  """Contact information from the user"""
+  contact: String
+
+  """URL from the AWS S3 where is stored the user photo"""
+  photoUrl: String
+
+  """Google UID for auth"""
+  googleUid: String
+
+  """Facebook UID for auth"""
+  facebookUid: String
+
+  """Firebase token"""
+  firebaseToken: String
+
+  """Registration date of the user"""
+  createdDate: DateTime
+
+  """Date of deletion of the user"""
+  deletedDate: DateTime
+
+  """Boolean to know if the user is soft deleted"""
+  isDeleted: Boolean
+
+  """ID from the user to update"""
+  id: Int!
+}
+
+input CreateCollectionInput {
+  """Name of the collection"""
+  name: String!
+
+  """URL from the AWS S3 where is stored the image"""
+  imageUrl: String
+
+  """Creation date of the record"""
+  createdDate: DateTime
+}
+
+input UpdateCollectionInput {
+  """Name of the collection"""
+  name: String
+
+  """URL from the AWS S3 where is stored the image"""
+  imageUrl: String
+
+  """Creation date of the record"""
+  createdDate: DateTime
+
+  """ID from the collection to update"""
+  id: Int!
+}
+
+input CreateCommentInput {
+  """Comment body"""
+  comment: String!
+
+  """ID from the user that is being commented"""
+  userId: Int
+
+  """ID from the artwork that is being commented"""
+  artworkId: Int
+
+  """ID from the comment that is being commented"""
+  commentId: Int
+
+  """Creation date of the record"""
+  createdDate: DateTime
+}
+
+input CreateReportInput {
+  """Report description"""
+  description: String!
+
+  """ID from the user that is being reported"""
+  userId: Int
+
+  """ID from the artwork that is being reported"""
+  artworkId: Int
+
+  """ID from the comment that is being reported"""
+  commentId: Int
+
+  """Creation date of the record"""
+  createdDate: DateTime
+}
