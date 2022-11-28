@@ -17,7 +17,8 @@ import { ReportsModule } from './reports/reports.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      playground: false,
+      playground: true,
+      introspection: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault],
     }),
     ArtworksModule,
