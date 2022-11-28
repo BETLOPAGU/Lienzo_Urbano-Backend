@@ -23,6 +23,5 @@ jobs:
           source ~/.nvm/nvm.sh
           nvm use 19
           yarn
-          yarn prisma:sync
           yarn build
           pm2 update
