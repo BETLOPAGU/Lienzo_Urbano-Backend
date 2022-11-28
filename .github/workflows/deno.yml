@@ -19,7 +19,7 @@ jobs:
         script: |
           cd lienzo_urbano-backend
           sudo git pull https://BETLOPAGU@github.com/BETLOPAGU/lienzo_urbano-backend
-          yarn
+          yarn install --production
           yarn prisma:sync
           yarn build
           pm2 update
