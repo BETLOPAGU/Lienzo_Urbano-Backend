@@ -57,6 +57,7 @@ type Artwork {
   colors: [ArtworkColor!]!
   movements: [ArtworkMovement!]!
   materials: [ArtworkMaterial!]!
+  artist: User!
 }
 
 """
@@ -76,72 +77,6 @@ type FavoriteArtwork {
 
   """Date of creation of the record"""
   createdDate: DateTime!
-}
-
-type ArtworkCollaborator {
-  """ID from the record"""
-  id: Int!
-
-  """ID from the artist"""
-  artistId: Int!
-
-  """ID from the artwork"""
-  artworkId: Int!
-}
-
-type ArtworkTag {
-  """ID from the record"""
-  id: Int!
-
-  """ID from the artwork"""
-  artworkId: Int!
-
-  """Tag assigned to the artwork"""
-  tag: String!
-}
-
-type ArtworkAddress {
-  """ID from the record"""
-  id: Int!
-
-  """ID from the artwork"""
-  artworkId: Int!
-
-  """Address from the artwork"""
-  address: String!
-}
-
-type ArtworkColor {
-  """ID from the record"""
-  id: Int!
-
-  """ID from the artwork"""
-  artworkId: Int!
-
-  """Color contained on the artwork"""
-  color: String!
-}
-
-type ArtworkMovement {
-  """ID from the record"""
-  id: Int!
-
-  """ID from the artwork"""
-  artworkId: Int!
-
-  """Movement from the artwork"""
-  movement: String!
-}
-
-type ArtworkMaterial {
-  """ID from the record"""
-  id: Int!
-
-  """ID from the artwork"""
-  artworkId: Int!
-
-  """Material from the artwork"""
-  material: String!
 }
 
 type User {
@@ -211,6 +146,75 @@ enum UserTypes {
   ADMIN
 }
 
+type ArtworkCollaborator {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artist"""
+  artistId: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Data from the artist collaborator"""
+  artist: User!
+}
+
+type ArtworkTag {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Tag assigned to the artwork"""
+  tag: String!
+}
+
+type ArtworkAddress {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Address from the artwork"""
+  address: String!
+}
+
+type ArtworkColor {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Color contained on the artwork"""
+  color: String!
+}
+
+type ArtworkMovement {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Movement from the artwork"""
+  movement: String!
+}
+
+type ArtworkMaterial {
+  """ID from the record"""
+  id: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Material from the artwork"""
+  material: String!
+}
+
 type UserRating {
   """ID from the record"""
   id: Int!
@@ -237,6 +241,9 @@ type Follower {
 
   """Date of creation of the record"""
   createdDate: DateTime!
+
+  """Data from the follower user"""
+  follower: User
 }
 
 type Collection {
@@ -625,6 +632,9 @@ type Mutation {
 
   """Method to auto generate test data"""
   runSeed: Boolean!
+
+  """Method to delete the data in all the tables"""
+  deleteDataFromDB: Boolean!
   createCollection(createCollectionInput: CreateCollectionInput!): Collection!
   updateCollection(updateCollectionInput: UpdateCollectionInput!): Collection!
   removeCollection(id: Int!): Collection!

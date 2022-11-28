@@ -6,9 +6,10 @@ import { UsersModule } from 'src/users/users.module';
 import { CollectionsModule } from '../collections/collections.module';
 import { CommentsModule } from '../comments/comments.module';
 import { ReportsModule } from '../reports/reports.module';
+import { PrismaService } from 'src/prisma.service';
 
 @Module({
-  providers: [SeedResolver, SeedService],
+  providers: [SeedResolver, SeedService, PrismaService],
   imports: [
     ArtworksModule,
     UsersModule,

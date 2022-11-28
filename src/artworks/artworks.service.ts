@@ -11,6 +11,7 @@ import { ArtworkAddress } from './entities/artworkAddress.entity';
 import { ArtworkColor } from './entities/artworkColor.entity';
 import { ArtworkMovement } from './entities/artworkMovement.entity';
 import { ArtworkMaterial } from './entities/artworkMaterial.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class ArtworksService {
@@ -143,9 +144,14 @@ export class ArtworksService {
   }
 
   async collaborators(artwork: Artwork): Promise<ArtworkCollaborator[]> {
-    return this.prisma.artworksCollaborators.findMany({
+    const result =  await this.prisma.artworksCollaborators.findMany({
       where: { artworkId: artwork.id },
+      include: {
+        users: true,
+      }
     });
+    const collaborators = result.map(c => ({...c, artist: c.users}))
+    return collaborators;
   }
 
   async overwriteTags(artworkId: number, tags?: string[]): Promise<number> {
@@ -264,6 +270,12 @@ export class ArtworksService {
   async materials(artwork: Artwork): Promise<ArtworkMaterial[]> {
     return this.prisma.artworksMaterials.findMany({
       where: { artworkId: artwork.id },
+    });
+  }
+
+  async artist(artwork: Artwork): Promise<User> {
+    return this.prisma.users.findUnique({
+      where: { id: artwork.artistId },
     });
   }
 }

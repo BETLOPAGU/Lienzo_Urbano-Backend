@@ -1,5 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { IsInt } from 'class-validator';
+import { User } from './user.entity';
 
 @ObjectType()
 export class Follower {
@@ -17,4 +18,10 @@ export class Follower {
 
   @Field(() => Date, { description: `Date of creation of the record` })
   createdDate: Date;
+
+  @Field(() => User, {
+    description: `Data from the follower user`,
+    nullable: true,
+  })
+  follower?: User;
 }

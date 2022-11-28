@@ -10,9 +10,11 @@ import { CommentsService } from '../comments/comments.service';
 import { Collection } from '../collections/entities/collection.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { Report } from 'src/reports/entities/report.entity';
+import { PrismaService } from 'src/prisma.service';
 @Injectable()
 export class SeedService {
   constructor(
+    private readonly prisma: PrismaService,
     private readonly artworksService: ArtworksService,
     private readonly usersService: UsersService,
     private readonly collectionsService: CollectionsService,
@@ -42,6 +44,27 @@ export class SeedService {
     for (let i = 0; i < 10; i++) {
       await this.createSeedReportForArtwork();
     }
+    return true;
+  }
+
+  async deleteDataFromDB(): Promise<boolean> {
+    await this.prisma.artworkCollections.deleteMany();
+    await this.prisma.artworks.deleteMany();
+    await this.prisma.artworksAddresses.deleteMany();
+    await this.prisma.artworksCollaborators.deleteMany();
+    await this.prisma.artworksColors.deleteMany();
+    await this.prisma.artworksMaterials.deleteMany();
+    await this.prisma.artworksMovements.deleteMany();
+    await this.prisma.artworksTags.deleteMany();
+    await this.prisma.collections.deleteMany();
+    await this.prisma.comments.deleteMany();
+    await this.prisma.commentsLikes.deleteMany();
+    await this.prisma.favoritesArtworks.deleteMany();
+    await this.prisma.followers.deleteMany();
+    await this.prisma.notifications.deleteMany();
+    await this.prisma.reports.deleteMany();
+    await this.prisma.users.deleteMany();
+    await this.prisma.usersRatings.deleteMany();
     return true;
   }
 
@@ -75,34 +98,44 @@ export class SeedService {
       isDeleted: false,
     });
 
+    this.usersService.followUnfollow(user.id, await this.getRandomUserId());
+
     return user;
   }
 
   async createSeedArtwork(): Promise<Artwork> {
     const random = Math.floor(Math.random() * 100000);
 
-    const artwork = this.artworksService.create(await this.getRandomUserId(), {
-      title: `Obra-${random}`,
-      description: `Descripcion-${random}`,
-      createdDate: new Date(),
-      imageUrl:
-        'https://artsupplyguide.b-cdn.net/wp-content/uploads/2022/03/graffiti-in-shoreditch-london.jpg',
-      minWidth: 5,
-      maxWidth: 7,
-      minHeight: 6,
-      maxHeight: 8,
-      minPrice: 5000,
-      maxPrice: 10000,
-      minWorkingHours: 50,
-      maxWorkingHours: 60,
-      isDeleted: false,
-      collaborators: [await this.getRandomUserId()],
-      tags: [`Tag-${random}`],
-      addresses: [`Address-${random}`],
-      colors: ['#CD5C5C', '#F08080', '#FA8072'],
-      materials: ['Pintura metálica', 'Aerosol'],
-      movements: ['Cubista', 'Realista'],
-    });
+    const artwork = await this.artworksService.create(
+      await this.getRandomUserId(),
+      {
+        title: `Obra-${random}`,
+        description: `Descripcion-${random}`,
+        createdDate: new Date(),
+        imageUrl:
+          'https://artsupplyguide.b-cdn.net/wp-content/uploads/2022/03/graffiti-in-shoreditch-london.jpg',
+        minWidth: 5,
+        maxWidth: 7,
+        minHeight: 6,
+        maxHeight: 8,
+        minPrice: 5000,
+        maxPrice: 10000,
+        minWorkingHours: 50,
+        maxWorkingHours: 60,
+        isDeleted: false,
+        collaborators: [await this.getRandomUserId()],
+        tags: [`Tag-${random}`],
+        addresses: [`Address-${random}`],
+        colors: ['#CD5C5C', '#F08080', '#FA8072'],
+        materials: ['Pintura metálica', 'Aerosol'],
+        movements: ['Cubista', 'Realista'],
+      },
+    );
+
+    this.artworksService.markUnmarkFavorite(
+      await this.getRandomUserId(),
+      artwork.id,
+    );
 
     return artwork;
   }
@@ -116,6 +149,11 @@ export class SeedService {
         name: `Coleccion-${random}`,
       },
     );
+
+    this.collectionsService.addRemoveArtworkFromCollection({
+      collectionId: collection.id,
+      artworkId: await this.getRandomArtworkId(),
+    });
 
     return collection;
   }

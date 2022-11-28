@@ -24,6 +24,7 @@ import { UseGuards } from '@nestjs/common';
 import { Jwt } from 'src/auth/decorators/jwt.decorator';
 import { UserTypes } from 'src/users/enums/user-types.enum';
 import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
+import { User } from '../users/entities/user.entity';
 
 @Resolver(() => Artwork)
 export class ArtworksResolver {
@@ -35,6 +36,7 @@ export class ArtworksResolver {
     @Jwt([UserTypes.ARTIST, UserTypes.ADMIN]) jwt: JwtPayload,
     @Args('createArtworkInput') createArtworkInput: CreateArtworkInput,
   ) {
+    console.log({jwt});
     return this.artworksService.create(jwt.userId, createArtworkInput);
   }
 
@@ -107,5 +109,10 @@ export class ArtworksResolver {
   @ResolveField(() => [ArtworkMaterial])
   materials(@Parent() artwork: Artwork) {
     return this.artworksService.materials(artwork);
+  }
+
+  @ResolveField(() => User)
+  artist(@Parent() artwork: Artwork) {
+    return this.artworksService.artist(artwork);
   }
 }
