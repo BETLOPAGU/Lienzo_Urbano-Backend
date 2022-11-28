@@ -257,11 +257,6 @@ type Collection {
   artworks: [Artwork!]!
 }
 
-type AuthResponse {
-  token: String!
-  user: User!
-}
-
 type ArtworkCollection {
   """ID from the record"""
   id: Int!
@@ -317,6 +312,11 @@ type Report {
 
   """Creation date of the record"""
   createdDate: DateTime
+}
+
+type AuthResponse {
+  token: String!
+  user: User!
 }
 
 input ArtworkInput {
@@ -493,9 +493,9 @@ type Query {
   artwork(id: Int!): Artwork
   users(filters: FindUsersInput): [User!]!
   user(id: Int!): User
-  login(loginInput: LoginInput!): AuthResponse!
   comments(userId: Int, artworkId: Int, commentId: Int): [Comment!]!
   reports(userId: Int, artworkId: Int, commentId: Int): [Report!]!
+  login(loginInput: LoginInput!): AuthResponse!
 }
 
 input FindArtworksInput {
