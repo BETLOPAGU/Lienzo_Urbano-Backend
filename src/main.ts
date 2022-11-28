@@ -12,7 +12,7 @@ async function bootstrap() {
   );
   await app.listen(process.env.APP_PORT);
   console.log(
-    `🚀🎨 Lienzo Urbano server is ready on http://localhost:${process.env.APP_PORT}/graphql`,
+    `🎨 Lienzo Urbano server is ready on http://localhost:${process.env.APP_PORT}/graphql`,
   );
 }
 bootstrap();
