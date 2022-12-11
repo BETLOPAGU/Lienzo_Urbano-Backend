@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { ArtworksService } from './artworks.service';
 import { ArtworksResolver } from './artworks.resolver';
 import { PrismaService } from 'src/prisma.service';
+import { S3Service } from 'src/s3.service';
 
 @Module({
-  providers: [ArtworksResolver, ArtworksService, PrismaService],
+  providers: [ArtworksResolver, ArtworksService, PrismaService, S3Service],
   exports: [ArtworksService],
 })
 export class ArtworksModule {}

@@ -109,11 +109,11 @@ export class SeedService {
     const artwork = await this.artworksService.create(
       await this.getRandomUserId(),
       {
-        title: `Obra-${random}`,
-        description: `Descripcion-${random}`,
+        title: `Artwork-${random}`,
+        description: `Description-${random}`,
         createdDate: new Date(),
         imageUrl:
-          'https://artsupplyguide.b-cdn.net/wp-content/uploads/2022/03/graffiti-in-shoreditch-london.jpg',
+          'https://i.pinimg.com/originals/a0/57/5b/a0575b7cf9a3bf8b53e474b4f944b31a.jpg',
         minWidth: 5,
         maxWidth: 7,
         minHeight: 6,
@@ -126,7 +126,6 @@ export class SeedService {
         collaborators: [await this.getRandomUserId()],
         tags: [`Tag-${random}`],
         addresses: [`Address-${random}`],
-        colors: ['#CD5C5C', '#F08080', '#FA8072'],
         materials: ['Pintura metálica', 'Aerosol'],
         movements: ['Cubista', 'Realista'],
       },

@@ -12,12 +12,21 @@ import { ArtworkColor } from './entities/artworkColor.entity';
 import { ArtworkMovement } from './entities/artworkMovement.entity';
 import { ArtworkMaterial } from './entities/artworkMaterial.entity';
 import { User } from 'src/users/entities/user.entity';
+import { S3Service } from 'src/s3.service';
+import { extractImageColors } from 'src/utils/extractImageColors';
+import * as chroma from 'chroma-js';
 
 @Injectable()
 export class ArtworksService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly s3Service: S3Service,
+  ) {}
 
   deleteExtraProps(input: CreateArtworkInput | UpdateArtworkInput) {
+    const photo = input.photo;
+    delete input.photo;
+
     const collaborators = input.collaborators;
     delete input.collaborators;
 
@@ -27,16 +36,20 @@ export class ArtworksService {
     const addresses = input.addresses;
     delete input.addresses;
 
-    const colors = input.colors;
-    delete input.colors;
-
     const movements = input.movements;
     delete input.movements;
 
     const materials = input.materials;
     delete input.materials;
 
-    return { collaborators, tags, addresses, colors, movements, materials };
+    return {
+      photo,
+      collaborators,
+      tags,
+      addresses,
+      movements,
+      materials,
+    };
   }
 
   async create(
@@ -50,10 +63,31 @@ export class ArtworksService {
       data: { artistId, ...createArtworkInput },
     });
 
+    if (!artwork) return artwork;
+
+    if (extraProps.photo) {
+      const imageUrl = await this.s3Service.uploadPhoto(
+        extraProps.photo,
+        `lienzo_urbano_artwork_${artwork.id}`,
+      );
+      if (imageUrl) {
+        await this.prisma.artworks.update({
+          where: { id: artwork.id },
+          data: {
+            imageUrl,
+          },
+        });
+        artwork.imageUrl = imageUrl;
+      }
+    }
+    if (artwork.imageUrl) {
+      const colors = await extractImageColors(artwork.imageUrl);
+      await this.overwriteColors(artwork.id, colors);
+    }
+
     await this.overwriteCollaborators(artwork.id, extraProps.collaborators);
     await this.overwriteTags(artwork.id, extraProps.tags);
     await this.overwriteAddresses(artwork.id, extraProps.addresses);
-    await this.overwriteColors(artwork.id, extraProps.colors);
     await this.overwriteMovements(artwork.id, extraProps.movements);
     await this.overwriteMaterials(artwork.id, extraProps.materials);
 
@@ -61,10 +95,32 @@ export class ArtworksService {
   }
 
   async findAll(findArtworksInput?: FindArtworksInput): Promise<Artwork[]> {
-    if (!findArtworksInput) findArtworksInput = { isDeleted: false };
-    return this.prisma.artworks.findMany({
-      where: findArtworksInput,
+    if (!findArtworksInput) findArtworksInput = {};
+
+    const color = findArtworksInput.color;
+    delete findArtworksInput.color;
+
+    const artworks = await this.prisma.artworks.findMany({
+      where: { ...findArtworksInput, isDeleted: false },
+      include: { artworksColors: true },
     });
+
+    if (color) {
+      const minimunDistance = 50;
+      const artworksFilteredByColor = artworks.filter((artwork) => {
+        const avgColor = artwork.artworksColors.find((c) =>
+          c.color.startsWith('AVG'),
+        )?.color;
+        if (!avgColor) return false;
+
+        const distance = chroma.distance(avgColor.replace('AVG', ''), color);
+        console.log(avgColor, color, distance);
+        return distance < minimunDistance;
+      });
+      return artworksFilteredByColor;
+    }
+
+    return artworks;
   }
 
   async findOne(id: number): Promise<Artwork> {
@@ -79,7 +135,6 @@ export class ArtworksService {
     await this.overwriteCollaborators(id, extraProps.collaborators);
     await this.overwriteTags(id, extraProps.tags);
     await this.overwriteAddresses(id, extraProps.addresses);
-    await this.overwriteColors(id, extraProps.colors);
     await this.overwriteMovements(id, extraProps.movements);
     await this.overwriteMaterials(id, extraProps.materials);
 
@@ -144,13 +199,13 @@ export class ArtworksService {
   }
 
   async collaborators(artwork: Artwork): Promise<ArtworkCollaborator[]> {
-    const result =  await this.prisma.artworksCollaborators.findMany({
+    const result = await this.prisma.artworksCollaborators.findMany({
       where: { artworkId: artwork.id },
       include: {
         users: true,
-      }
+      },
     });
-    const collaborators = result.map(c => ({...c, artist: c.users}))
+    const collaborators = result.map((c) => ({ ...c, artist: c.users }));
     return collaborators;
   }
 

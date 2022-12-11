@@ -17,5 +17,5 @@ export class ArtworkCollaborator {
   artworkId: number;
 
   @Field(() => User, { description: `Data from the artist collaborator` })
-  artist: User
+  artist: User;
 }

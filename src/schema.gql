@@ -553,6 +553,11 @@ input FindArtworksInput {
 
   """Boolean to know if the artwork is soft deleted"""
   isDeleted: Boolean
+
+  """
+  Computes the Euclidean distance between this color ant the colors of all artworks
+  """
+  color: String!
 }
 
 input FindUsersInput {
@@ -690,6 +695,9 @@ input CreateArtworkInput {
   """Boolean to know if the artwork is soft deleted"""
   isDeleted: Boolean
 
+  """Photo from the user"""
+  photo: String
+
   """List of collaborators artists"""
   collaborators: [Int!]
 
@@ -698,9 +706,6 @@ input CreateArtworkInput {
 
   """List of addresses from the artwork"""
   addresses: [String!]
-
-  """List of colors from the artwork"""
-  colors: [String!]
 
   """List of artistic movements from the artwork"""
   movements: [String!]
@@ -752,6 +757,9 @@ input UpdateArtworkInput {
   """Boolean to know if the artwork is soft deleted"""
   isDeleted: Boolean
 
+  """Photo from the user"""
+  photo: String
+
   """List of collaborators artists"""
   collaborators: [Int!]
 
@@ -760,9 +768,6 @@ input UpdateArtworkInput {
 
   """List of addresses from the artwork"""
   addresses: [String!]
-
-  """List of colors from the artwork"""
-  colors: [String!]
 
   """List of artistic movements from the artwork"""
   movements: [String!]
@@ -825,6 +830,9 @@ input CreateUserInput {
 
   """Boolean to know if the user is soft deleted"""
   isDeleted: Boolean
+
+  """Photo from the user"""
+  photo: String
 }
 
 input UpdateUserInput {
@@ -878,6 +886,9 @@ input UpdateUserInput {
 
   """Boolean to know if the user is soft deleted"""
   isDeleted: Boolean
+
+  """Photo from the user"""
+  photo: String
 
   """ID from the user to update"""
   id: Int!

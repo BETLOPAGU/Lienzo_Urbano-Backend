@@ -7,6 +7,13 @@ export class CreateArtworkInput extends OmitType(Artwork, [
   'id',
   'artistId',
 ] as const) {
+  @Field(() => String, {
+    nullable: true,
+    description: `Photo from the user`,
+  })
+  @IsOptional()
+  photo?: string;
+
   @Field(() => [Int], {
     description: `List of collaborators artists`,
     nullable: true,
@@ -30,14 +37,6 @@ export class CreateArtworkInput extends OmitType(Artwork, [
   @IsOptional()
   @IsArray()
   addresses?: string[];
-
-  @Field(() => [String], {
-    description: `List of colors from the artwork`,
-    nullable: true,
-  })
-  @IsOptional()
-  @IsArray()
-  colors?: string[];
 
   @Field(() => [String], {
     description: `List of artistic movements from the artwork`,

@@ -36,7 +36,6 @@ export class ArtworksResolver {
     @Jwt([UserTypes.ARTIST, UserTypes.ADMIN]) jwt: JwtPayload,
     @Args('createArtworkInput') createArtworkInput: CreateArtworkInput,
   ) {
-    console.log({jwt});
     return this.artworksService.create(jwt.userId, createArtworkInput);
   }
 

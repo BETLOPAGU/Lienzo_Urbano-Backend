@@ -9,18 +9,47 @@ import { UserRating } from './entities/userRating.entity';
 import * as bcrypt from 'bcrypt';
 import { Collection } from '../collections/entities/collection.entity';
 import { NotificationTypes } from './enums/notification-types.enum';
+import { S3Service } from 'src/s3.service';
+import { extractImageColors } from 'src/utils/extractImageColors';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly s3Service: S3Service,
+  ) {}
 
   async create(createUserInput: CreateUserInput): Promise<User> {
     try {
+      const photo = createUserInput.photo;
+      delete createUserInput.photo;
+
       createUserInput.createdDate = new Date();
       createUserInput.pass = bcrypt.hashSync(createUserInput.pass, 10);
       const user = await this.prisma.users.create({
         data: createUserInput,
       });
+
+      if (user && photo) {
+        const photoUrl = await this.s3Service.uploadPhoto(
+          photo,
+          `lienzo_urbano_user_${user.id}`,
+        );
+        if (photoUrl) {
+          await this.prisma.users.update({
+            where: { id: user.id },
+            data: {
+              photoUrl,
+            },
+          });
+          user.photoUrl = photoUrl;
+
+          const x = await extractImageColors(
+            'https://i.pinimg.com/originals/a0/57/5b/a0575b7cf9a3bf8b53e474b4f944b31a.jpg',
+          );
+        }
+      }
+
       return user;
     } catch (error) {
       if (error.code === 'P2002') {
