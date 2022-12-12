@@ -18,3 +18,9 @@ jobs:
         port: 22
         script: |
           cd lienzo_urbano-backend
+          sudo git pull https://BETLOPAGU@github.com/BETLOPAGU/lienzo_urbano-backend
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          nvm use 19
+          yarn
+          pm2 update
