@@ -4,7 +4,9 @@
 # Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
 # See the documentation for all the connection string options: https://pris.ly/d/connection-strings
 
-DATABASE_URL="mysql://root:Gutopia12$HxH$@localhost:3306/lienzoUrbano"
-APP_PORT=3011
+DATABASE_URL="mysql://root:password@host/db"
+APP_PORT=3000
 DEBUG=true
-JWT_SECRET=S3cr3tSeedG3r4
+JWT_SECRET="jwt_secret"
+AWS_ID="aws_id"
+AWS_SECRET="aws_secret"

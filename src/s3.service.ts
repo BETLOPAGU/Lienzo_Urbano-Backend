@@ -7,8 +7,8 @@ export class S3Service {
     photo: string,
     photo_key: string,
   ): Promise<string> => {
-    const ID = 'AKIA3SAWYSMW3D7CCWHX';
-    const SECRET = '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';
+    const ID = process.env.AWS_ID;
+    const SECRET = process.env.AWS_SECRET;
     const BUCKET_NAME = 'piase';
 
     if (photo_key.startsWith('http')) {

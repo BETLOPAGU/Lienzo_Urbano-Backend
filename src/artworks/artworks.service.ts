@@ -114,7 +114,6 @@ export class ArtworksService {
         if (!avgColor) return false;
 
         const distance = chroma.distance(avgColor.replace('AVG', ''), color);
-        console.log(avgColor, color, distance);
         return distance < minimunDistance;
       });
       return artworksFilteredByColor;
