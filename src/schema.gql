@@ -264,6 +264,39 @@ type Collection {
   artworks: [Artwork!]!
 }
 
+type Notification {
+  """ID from the notification"""
+  id: Int!
+
+  """ID from the user who owns the notification"""
+  userId: Int!
+
+  """Type ID from the notification"""
+  typeId: NotificationTypes
+
+  """Title of the notification"""
+  title: String
+
+  """Content of the notification"""
+  content: String
+
+  """Link of the notification"""
+  link: String
+
+  """Creation date of the notification"""
+  createdDate: String
+
+  """Boolean to know if the user has viewed the notification"""
+  viewed: Boolean
+}
+
+"""Notification types supported"""
+enum NotificationTypes {
+  INFO
+  SUCCESS
+  ERROR
+}
+
 type ArtworkCollection {
   """ID from the record"""
   id: Int!
@@ -295,7 +328,7 @@ type Comment {
   commentId: Int
 
   """Creation date of the record"""
-  createdDate: DateTime
+  createdDate: String
 }
 
 type Report {
@@ -469,7 +502,7 @@ input CommentInput {
   commentId: Int
 
   """Creation date of the record"""
-  createdDate: DateTime
+  createdDate: String
 }
 
 input ReportInput {
@@ -500,7 +533,9 @@ type Query {
   artwork(id: Int!): Artwork
   users(filters: FindUsersInput): [User!]!
   user(id: Int!): User
+  notifications: [Notification!]!
   comments(userId: Int, artworkId: Int, commentId: Int): [Comment!]!
+  getListOfCommentedUsers: [User!]!
   reports(userId: Int, artworkId: Int, commentId: Int): [Report!]!
   login(loginInput: LoginInput!): AuthResponse!
 }
@@ -634,6 +669,8 @@ type Mutation {
   removeUser(id: Int!): User!
   rateUser(id: Int!, rating: Int!): UserRating!
   followUnfollowUser(id: Int!): Follower!
+  markNotificationAsViewed(id: Int!): Notification!
+  removeNotification(id: Int!): Notification!
 
   """Method to auto generate test data"""
   runSeed: Boolean!
@@ -933,7 +970,7 @@ input CreateCommentInput {
   commentId: Int
 
   """Creation date of the record"""
-  createdDate: DateTime
+  createdDate: String
 }
 
 input CreateReportInput {
@@ -951,4 +988,10 @@ input CreateReportInput {
 
   """Creation date of the record"""
   createdDate: DateTime
+}
+
+type Subscription {
+  userNotifications: Notification!
+  globalNotifications: Notification!
+  commentAdded(userId: Int, artworkId: Int, commentId: Int): Comment!
 }

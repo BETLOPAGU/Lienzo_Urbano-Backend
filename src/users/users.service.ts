@@ -8,15 +8,15 @@ import { User } from './entities/user.entity';
 import { UserRating } from './entities/userRating.entity';
 import * as bcrypt from 'bcrypt';
 import { Collection } from '../collections/entities/collection.entity';
-import { NotificationTypes } from './enums/notification-types.enum';
 import { S3Service } from 'src/s3.service';
-import { extractImageColors } from 'src/utils/extractImageColors';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly s3Service: S3Service,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async create(createUserInput: CreateUserInput): Promise<User> {
@@ -43,10 +43,6 @@ export class UsersService {
             },
           });
           user.photoUrl = photoUrl;
-
-          const x = await extractImageColors(
-            'https://i.pinimg.com/originals/a0/57/5b/a0575b7cf9a3bf8b53e474b4f944b31a.jpg',
-          );
         }
       }
 
@@ -102,14 +98,10 @@ export class UsersService {
       const qualifier = await this.prisma.users.findUnique({
         where: { id: qualifierId },
       });
-      this.prisma.notifications.create({
-        data: {
-          userId,
-          typeId: NotificationTypes.SUCCESS,
-          title: 'Alguien ha puntuado tu perfil',
-          content: `${qualifier.firstName} ${qualifier.lastName} te ha puesto una calificación de ${rating}`,
-          createdDate: new Date(),
-        },
+      await this.notificationsService.create({
+        userId,
+        title: 'Alguien ha puntuado tu perfil',
+        content: `${qualifier.firstName} ${qualifier.lastName} te ha puesto una calificación de ${rating}`,
       });
       return this.prisma.usersRatings.create({
         data: {
@@ -144,15 +136,13 @@ export class UsersService {
       const follower = await this.prisma.users.findUnique({
         where: { id: followerId },
       });
-      this.prisma.notifications.create({
-        data: {
-          userId,
-          typeId: NotificationTypes.SUCCESS,
-          title: 'Alguien te ha empezado a seguir',
-          content: `${follower.firstName} ${follower.lastName} ahora es tu seguidor`,
-          createdDate: new Date(),
-        },
+
+      await this.notificationsService.create({
+        userId,
+        title: 'Alguien te ha empezado a seguir',
+        content: `${follower.firstName} ${follower.lastName} ahora es tu seguidor`,
       });
+
       return this.prisma.followers.create({
         data: {
           createdDate: new Date(),

@@ -18,6 +18,8 @@ const reports_service_1 = require("./reports.service");
 const report_entity_1 = require("./entities/report.entity");
 const create_report_input_1 = require("./dto/create-report.input");
 const jwt_decorator_1 = require("../auth/decorators/jwt.decorator");
+const common_1 = require("@nestjs/common");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 let ReportsResolver = class ReportsResolver {
     constructor(reportsService) {
         this.reportsService = reportsService;
@@ -37,6 +39,7 @@ let ReportsResolver = class ReportsResolver {
 };
 __decorate([
     (0, graphql_1.Mutation)(() => report_entity_1.Report),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, jwt_decorator_1.Jwt)()),
     __param(1, (0, graphql_1.Args)('createReportInput')),
     __metadata("design:type", Function),

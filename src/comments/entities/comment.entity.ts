@@ -43,7 +43,7 @@ export class Comment {
   @IsOptional()
   commentId?: number;
 
-  @Field(() => Date, {
+  @Field(() => String, {
     nullable: true,
     description: `Creation date of the record`,
   })

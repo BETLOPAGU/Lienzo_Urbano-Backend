@@ -23,6 +23,8 @@ const userRating_entity_1 = require("./entities/userRating.entity");
 const follower_entity_1 = require("./entities/follower.entity");
 const jwt_decorator_1 = require("../auth/decorators/jwt.decorator");
 const collection_entity_1 = require("../collections/entities/collection.entity");
+const common_1 = require("@nestjs/common");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 let UsersResolver = class UsersResolver {
     constructor(usersService) {
         this.usersService = usersService;
@@ -98,6 +100,7 @@ __decorate([
 ], UsersResolver.prototype, "removeUser", null);
 __decorate([
     (0, graphql_1.Mutation)(() => userRating_entity_1.UserRating),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, jwt_decorator_1.Jwt)()),
     __param(1, (0, graphql_1.Args)('id', { type: () => graphql_1.Int })),
     __param(2, (0, graphql_1.Args)('rating', { type: () => graphql_1.Int })),
@@ -114,6 +117,7 @@ __decorate([
 ], UsersResolver.prototype, "rating", null);
 __decorate([
     (0, graphql_1.Mutation)(() => follower_entity_1.Follower),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, jwt_decorator_1.Jwt)()),
     __param(1, (0, graphql_1.Args)('id', { type: () => graphql_1.Int })),
     __metadata("design:type", Function),

@@ -1,18 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { PrismaService } from 'src/prisma.service';
+import { PUB_SUB } from 'src/pubsub/pubsub.module';
 import { CreateCommentInput } from './dto/create-comment.input';
 import { Comment } from './entities/comment.entity';
+import { User } from '../users/entities/user.entity';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class CommentsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notificationsService: NotificationsService,
+    @Inject(PUB_SUB) private pubSub: RedisPubSub,
+  ) {}
 
   async create(
     commentatorId: number,
     createCommentInput: CreateCommentInput,
   ): Promise<Comment> {
     const { userId, artworkId, commentId } = createCommentInput;
-    return this.prisma.comments.create({
+
+    const commentator = await this.prisma.users.findUnique({
+      where: { id: commentatorId },
+    });
+
+    const commentCreated = await this.prisma.comments.create({
       data: {
         createdDate: new Date(),
         commentatorId,
@@ -22,6 +35,47 @@ export class CommentsService {
         ...(commentId ? { commentId } : {}),
       },
     });
+
+    if (userId) {
+      this.pubSub.publish(`COMMENT_ADDED_FOR_USER_${userId}`, {
+        commentAdded: commentCreated,
+      });
+      await this.notificationsService.create({
+        userId,
+        title: `Has recibido un nuevo mensaje de ${commentator.firstName} ${commentator.lastName}`,
+        content: commentCreated.comment,
+      });
+    }
+
+    if (artworkId) {
+      const artwork = await this.prisma.artworks.findUnique({
+        where: { id: artworkId },
+      });
+      this.pubSub.publish(`COMMENT_ADDED_FOR_ARTWORK_${artworkId}`, {
+        commentAdded: commentCreated,
+      });
+      await this.notificationsService.create({
+        userId: artwork.artistId,
+        title: `${commentator.firstName} ${commentator.lastName} ha comentado tu obra de arte "${artwork.title}"`,
+        content: commentCreated.comment,
+      });
+    }
+
+    if (commentId) {
+      const comment = await this.prisma.comments.findUnique({
+        where: { id: commentId },
+      });
+      this.pubSub.publish(`COMMENT_ADDED_FOR_COMMENT_${commentId}`, {
+        commentAdded: comment,
+      });
+      await this.notificationsService.create({
+        userId: comment.commentatorId,
+        title: `${commentator.firstName} ${commentator.lastName} ha comentado tu comentario`,
+        content: commentCreated.comment,
+      });
+    }
+
+    return commentCreated;
   }
 
   async findAll(payload: {
@@ -35,6 +89,24 @@ export class CommentsService {
         ...(userId ? { userId } : {}),
         ...(artworkId ? { artworkId } : {}),
         ...(commentId ? { commentId } : {}),
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+  }
+
+  async getListOfCommentedUsers(commentatorId: number): Promise<User[]> {
+    const comments = await this.prisma.comments.groupBy({
+      by: ['userId'],
+      where: {
+        AND: [{ commentatorId }, { NOT: [{ userId: null }] }],
+      },
+    });
+
+    return this.prisma.users.findMany({
+      where: {
+        id: { in: comments.map((c) => c.userId) },
       },
     });
   }

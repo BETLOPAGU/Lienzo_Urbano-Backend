@@ -14,12 +14,15 @@ import { Jwt } from 'src/auth/decorators/jwt.decorator';
 import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
 import { ArtworkCollection } from './entities/artworkCollection.entity';
 import { Artwork } from '../artworks/entities/artwork.entity';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Resolver(() => Collection)
 export class CollectionsResolver {
   constructor(private readonly collectionsService: CollectionsService) {}
 
   @Mutation(() => Collection)
+  @UseGuards(JwtAuthGuard)
   createCollection(
     @Jwt() jwt: JwtPayload,
     @Args('createCollectionInput') createCollectionInput: CreateCollectionInput,

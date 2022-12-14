@@ -11,6 +11,8 @@ import { AuthModule } from './auth/auth.module';
 import { CollectionsModule } from './collections/collections.module';
 import { CommentsModule } from './comments/comments.module';
 import { ReportsModule } from './reports/reports.module';
+import { PubsubModule } from './pubsub/pubsub.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -20,6 +22,13 @@ import { ReportsModule } from './reports/reports.module';
       playground: false,
       introspection: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault({ footer: false })],
+      subscriptions: {
+        'graphql-ws': true,
+      },
+      context: ({ req, connectionParams }) =>
+        connectionParams
+          ? { req: connectionParams, isWebSocket: true }
+          : { req },
     }),
     ArtworksModule,
     UsersModule,
@@ -28,8 +37,9 @@ import { ReportsModule } from './reports/reports.module';
     CollectionsModule,
     CommentsModule,
     ReportsModule,
+    PubsubModule,
+    NotificationsModule,
   ],
   controllers: [],
-  providers: [],
 })
 export class AppModule {}

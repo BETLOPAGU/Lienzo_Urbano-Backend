@@ -60,7 +60,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Comment.prototype, "commentId", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => Date, {
+    (0, graphql_1.Field)(() => String, {
         nullable: true,
         description: `Creation date of the record`,
     }),

@@ -12,11 +12,13 @@ const users_service_1 = require("./users.service");
 const users_resolver_1 = require("./users.resolver");
 const prisma_service_1 = require("../prisma.service");
 const s3_service_1 = require("../s3.service");
+const notifications_module_1 = require("../notifications/notifications.module");
 let UsersModule = class UsersModule {
 };
 UsersModule = __decorate([
     (0, common_1.Module)({
         providers: [users_resolver_1.UsersResolver, users_service_1.UsersService, prisma_service_1.PrismaService, s3_service_1.S3Service],
+        imports: [notifications_module_1.NotificationsModule],
         exports: [users_service_1.UsersService],
     })
 ], UsersModule);

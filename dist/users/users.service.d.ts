@@ -7,10 +7,12 @@ import { User } from './entities/user.entity';
 import { UserRating } from './entities/userRating.entity';
 import { Collection } from '../collections/entities/collection.entity';
 import { S3Service } from 'src/s3.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 export declare class UsersService {
     private readonly prisma;
     private readonly s3Service;
-    constructor(prisma: PrismaService, s3Service: S3Service);
+    private readonly notificationsService;
+    constructor(prisma: PrismaService, s3Service: S3Service, notificationsService: NotificationsService);
     create(createUserInput: CreateUserInput): Promise<User>;
     findAll(findUsersInput?: FindUsersInput): Promise<User[]>;
     findOne(id: number): Promise<User>;

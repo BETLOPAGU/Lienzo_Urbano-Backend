@@ -28,9 +28,15 @@ let SeedService = class SeedService {
         this.reportsService = reportsService;
     }
     async populateDB() {
+        await this.createSeedUser();
         for (let i = 0; i < 10; i++) {
             await this.createSeedUser();
         }
+        const id = await this.getRandomUserId();
+        await this.prisma.users.update({
+            data: { email: 'gerardo@arceo.com' },
+            where: { id },
+        });
         for (let i = 0; i < 10; i++) {
             await this.createSeedArtwork();
         }

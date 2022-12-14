@@ -18,6 +18,8 @@ import { Follower } from './entities/follower.entity';
 import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
 import { Jwt } from 'src/auth/decorators/jwt.decorator';
 import { Collection } from 'src/collections/entities/collection.entity';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -52,6 +54,7 @@ export class UsersResolver {
   }
 
   @Mutation(() => UserRating)
+  @UseGuards(JwtAuthGuard)
   rateUser(
     @Jwt() jwt: JwtPayload,
     @Args('id', { type: () => Int }) id: number,
@@ -66,6 +69,7 @@ export class UsersResolver {
   }
 
   @Mutation(() => Follower)
+  @UseGuards(JwtAuthGuard)
   followUnfollowUser(
     @Jwt() jwt: JwtPayload,
     @Args('id', { type: () => Int }) id: number,

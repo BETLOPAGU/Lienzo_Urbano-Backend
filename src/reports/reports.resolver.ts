@@ -4,12 +4,15 @@ import { Report } from './entities/report.entity';
 import { CreateReportInput } from './dto/create-report.input';
 import { Jwt } from 'src/auth/decorators/jwt.decorator';
 import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Resolver(() => Report)
 export class ReportsResolver {
   constructor(private readonly reportsService: ReportsService) {}
 
   @Mutation(() => Report)
+  @UseGuards(JwtAuthGuard)
   createReport(
     @Jwt() jwt: JwtPayload,
     @Args('createReportInput') createReportInput: CreateReportInput,

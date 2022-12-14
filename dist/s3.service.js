@@ -12,8 +12,8 @@ const AWS = require("aws-sdk");
 let S3Service = class S3Service {
     constructor() {
         this.uploadPhoto = async (photo, photo_key) => {
-            const ID = 'AKIA3SAWYSMW3D7CCWHX';
-            const SECRET = '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';
+            const ID = process.env.AWS_ID;
+            const SECRET = process.env.AWS_SECRET;
             const BUCKET_NAME = 'piase';
             if (photo_key.startsWith('http')) {
                 let real_key = photo_key.split('/')[3];

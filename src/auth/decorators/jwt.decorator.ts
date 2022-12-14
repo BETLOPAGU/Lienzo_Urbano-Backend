@@ -7,11 +7,16 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { UserTypes } from 'src/users/enums/user-types.enum';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
+import { JwtService } from '@nestjs/jwt';
 
 export const Jwt = createParamDecorator(
   (validUserTypes: UserTypes[] = [], context: ExecutionContext) => {
+    const jwtService = new JwtService();
     const ctx = GqlExecutionContext.create(context);
-    const jwt: JwtPayload = ctx.getContext().req.user;
+    const { req } = ctx.getContext();
+
+    const jwt: JwtPayload =
+      req.user || jwtService.decode(req.Authorization.replace('Bearer ', ''));
 
     if (!jwt) {
       throw new InternalServerErrorException(`No jwt inside the request`);

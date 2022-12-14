@@ -19,6 +19,8 @@ const auth_module_1 = require("./auth/auth.module");
 const collections_module_1 = require("./collections/collections.module");
 const comments_module_1 = require("./comments/comments.module");
 const reports_module_1 = require("./reports/reports.module");
+const pubsub_module_1 = require("./pubsub/pubsub.module");
+const notifications_module_1 = require("./notifications/notifications.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -30,6 +32,12 @@ AppModule = __decorate([
                 playground: false,
                 introspection: true,
                 plugins: [(0, apollo_server_core_1.ApolloServerPluginLandingPageLocalDefault)({ footer: false })],
+                subscriptions: {
+                    'graphql-ws': true,
+                },
+                context: ({ req, connectionParams }) => connectionParams
+                    ? { req: connectionParams, isWebSocket: true }
+                    : { req },
             }),
             artworks_module_1.ArtworksModule,
             users_module_1.UsersModule,
@@ -38,9 +46,10 @@ AppModule = __decorate([
             collections_module_1.CollectionsModule,
             comments_module_1.CommentsModule,
             reports_module_1.ReportsModule,
+            pubsub_module_1.PubsubModule,
+            notifications_module_1.NotificationsModule,
         ],
         controllers: [],
-        providers: [],
     })
 ], AppModule);
 exports.AppModule = AppModule;

@@ -13,13 +13,13 @@ exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma.service");
 const bcrypt = require("bcrypt");
-const notification_types_enum_1 = require("./enums/notification-types.enum");
 const s3_service_1 = require("../s3.service");
-const extractImageColors_1 = require("../utils/extractImageColors");
+const notifications_service_1 = require("../notifications/notifications.service");
 let UsersService = class UsersService {
-    constructor(prisma, s3Service) {
+    constructor(prisma, s3Service, notificationsService) {
         this.prisma = prisma;
         this.s3Service = s3Service;
+        this.notificationsService = notificationsService;
     }
     async create(createUserInput) {
         try {
@@ -40,7 +40,6 @@ let UsersService = class UsersService {
                         },
                     });
                     user.photoUrl = photoUrl;
-                    const x = await (0, extractImageColors_1.extractImageColors)('https://i.pinimg.com/originals/a0/57/5b/a0575b7cf9a3bf8b53e474b4f944b31a.jpg');
                 }
             }
             return user;
@@ -88,14 +87,10 @@ let UsersService = class UsersService {
             const qualifier = await this.prisma.users.findUnique({
                 where: { id: qualifierId },
             });
-            this.prisma.notifications.create({
-                data: {
-                    userId,
-                    typeId: notification_types_enum_1.NotificationTypes.SUCCESS,
-                    title: 'Alguien ha puntuado tu perfil',
-                    content: `${qualifier.firstName} ${qualifier.lastName} te ha puesto una calificación de ${rating}`,
-                    createdDate: new Date(),
-                },
+            await this.notificationsService.create({
+                userId,
+                title: 'Alguien ha puntuado tu perfil',
+                content: `${qualifier.firstName} ${qualifier.lastName} te ha puesto una calificación de ${rating}`,
             });
             return this.prisma.usersRatings.create({
                 data: {
@@ -129,14 +124,10 @@ let UsersService = class UsersService {
             const follower = await this.prisma.users.findUnique({
                 where: { id: followerId },
             });
-            this.prisma.notifications.create({
-                data: {
-                    userId,
-                    typeId: notification_types_enum_1.NotificationTypes.SUCCESS,
-                    title: 'Alguien te ha empezado a seguir',
-                    content: `${follower.firstName} ${follower.lastName} ahora es tu seguidor`,
-                    createdDate: new Date(),
-                },
+            await this.notificationsService.create({
+                userId,
+                title: 'Alguien te ha empezado a seguir',
+                content: `${follower.firstName} ${follower.lastName} ahora es tu seguidor`,
             });
             return this.prisma.followers.create({
                 data: {
@@ -169,7 +160,8 @@ let UsersService = class UsersService {
 UsersService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        s3_service_1.S3Service])
+        s3_service_1.S3Service,
+        notifications_service_1.NotificationsService])
 ], UsersService);
 exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map

@@ -21,6 +21,8 @@ const update_collection_input_1 = require("./dto/update-collection.input");
 const jwt_decorator_1 = require("../auth/decorators/jwt.decorator");
 const artworkCollection_entity_1 = require("./entities/artworkCollection.entity");
 const artwork_entity_1 = require("../artworks/entities/artwork.entity");
+const common_1 = require("@nestjs/common");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 let CollectionsResolver = class CollectionsResolver {
     constructor(collectionsService) {
         this.collectionsService = collectionsService;
@@ -46,6 +48,7 @@ let CollectionsResolver = class CollectionsResolver {
 };
 __decorate([
     (0, graphql_1.Mutation)(() => collection_entity_1.Collection),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, jwt_decorator_1.Jwt)()),
     __param(1, (0, graphql_1.Args)('createCollectionInput')),
     __metadata("design:type", Function),

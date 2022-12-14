@@ -11,12 +11,15 @@ const common_1 = require("@nestjs/common");
 const comments_service_1 = require("./comments.service");
 const comments_resolver_1 = require("./comments.resolver");
 const prisma_service_1 = require("../prisma.service");
+const pubsub_module_1 = require("../pubsub/pubsub.module");
+const notifications_module_1 = require("../notifications/notifications.module");
 let CommentsModule = class CommentsModule {
 };
 CommentsModule = __decorate([
     (0, common_1.Module)({
         providers: [comments_resolver_1.CommentsResolver, comments_service_1.CommentsService, prisma_service_1.PrismaService],
         exports: [comments_service_1.CommentsService],
+        imports: [pubsub_module_1.PubsubModule, notifications_module_1.NotificationsModule],
     })
 ], CommentsModule);
 exports.CommentsModule = CommentsModule;

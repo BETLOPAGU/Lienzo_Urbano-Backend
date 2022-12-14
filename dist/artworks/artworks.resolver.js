@@ -80,7 +80,6 @@ let ArtworksResolver = class ArtworksResolver {
 };
 __decorate([
     (0, graphql_1.Mutation)(() => artwork_entity_1.Artwork),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, jwt_decorator_1.Jwt)([user_types_enum_1.UserTypes.ARTIST, user_types_enum_1.UserTypes.ADMIN])),
     __param(1, (0, graphql_1.Args)('createArtworkInput')),
     __metadata("design:type", Function),
@@ -117,6 +116,7 @@ __decorate([
 ], ArtworksResolver.prototype, "removeArtwork", null);
 __decorate([
     (0, graphql_1.Mutation)(() => favoriteArtwork_entity_1.FavoriteArtwork),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, jwt_decorator_1.Jwt)()),
     __param(1, (0, graphql_1.Args)('id', { type: () => graphql_1.Int })),
     __metadata("design:type", Function),
