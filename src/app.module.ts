@@ -13,6 +13,7 @@ import { CommentsModule } from './comments/comments.module';
 import { ReportsModule } from './reports/reports.module';
 import { PubsubModule } from './pubsub/pubsub.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     ReportsModule,
     PubsubModule,
     NotificationsModule,
+    EventsModule,
   ],
   controllers: [],
 })

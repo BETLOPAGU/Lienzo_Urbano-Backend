@@ -36,6 +36,7 @@ model users {
   comments_comments_commentatorIdTousers       comments[]              @relation("comments_commentatorIdTousers")
   comments_commentsTousers                     comments[]
   commentsLikes                                commentsLikes[]
+  events                                       events[]
   favoritesArtworks                            favoritesArtworks[]
   followers                                    followers[]             @relation("followers_followerIdTousers")
   followers_followers_userIdTousers            followers[]             @relation("followers_userIdTousers")
@@ -72,6 +73,7 @@ model artworks {
   artworksMovements     artworksMovements[]
   artworksTags          artworksTags[]
   comments              comments[]
+  events                events[]
   favoritesArtworks     favoritesArtworks[]
   reports               reports[]
 
@@ -257,5 +259,18 @@ model reports {
   @@index([artworkId], map: "artworkId")
   @@index([commentId], map: "commentId")
   @@index([reporterId], map: "reporterId")
+  @@index([userId], map: "userId")
+}
+
+model events {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  artworkId   Int
+  typeId      Int       @default(1)
+  createdDate DateTime? @db.Date
+  users       users     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "events_ibfk_1")
+  artworks    artworks  @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "events_ibfk_2")
+
+  @@index([artworkId], map: "artworkId")
   @@index([userId], map: "userId")
 }

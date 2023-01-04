@@ -15,6 +15,7 @@ import { User } from 'src/users/entities/user.entity';
 import { S3Service } from 'src/s3.service';
 import { extractImageColors } from 'src/utils/extractImageColors';
 import * as chroma from 'chroma-js';
+import { EventTypes } from 'src/events/enums/event-types.enum';
 
 @Injectable()
 export class ArtworksService {
@@ -122,8 +123,16 @@ export class ArtworksService {
     return artworks;
   }
 
-  async findOne(id: number): Promise<Artwork> {
-    return this.prisma.artworks.findUnique({ where: { id } });
+  async findOne(userId: number, artworkId: number): Promise<Artwork> {
+    await this.prisma.events.create({
+      data: {
+        artworkId,
+        userId,
+        typeId: EventTypes.VISIT,
+        createdDate: new Date(),
+      },
+    });
+    return this.prisma.artworks.findUnique({ where: { id: artworkId } });
   }
 
   async update(
@@ -158,10 +167,25 @@ export class ArtworksService {
     );
 
     if (favoriteArtworkRecord) {
+      await this.prisma.events.deleteMany({
+        where: {
+          artworkId,
+          userId,
+          typeId: EventTypes.FAVORITE,
+        },
+      });
       return this.prisma.favoritesArtworks.delete({
         where: { id: favoriteArtworkRecord.id },
       });
     } else {
+      await this.prisma.events.create({
+        data: {
+          artworkId,
+          userId,
+          typeId: EventTypes.FAVORITE,
+          createdDate: new Date(),
+        },
+      });
       return this.prisma.favoritesArtworks.create({
         data: {
           createdDate: new Date(),

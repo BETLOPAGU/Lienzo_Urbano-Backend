@@ -1,20 +1,20 @@
-name: Deno
+# name: Deno
 
-on:
-  push:
-    branches: [production]
+# on:
+#   push:
+#     branches: [production]
 
-jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@master
-      with:
-        host: "34.229.0.219"
-        username: "ubuntu"
-        key: ${{ secrets.EC2KEY }}
-        port: 22
-        script: |
-          cd lienzo_urbano-backend
+# jobs:
+#   build:
+#     name: Build
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: executing remote ssh commands using password
+#       uses: appleboy/ssh-action@master
+#       with:
+#         host: "34.229.0.219"
+#         username: "ubuntu"
+#         key: ${{ secrets.EC2KEY }}
+#         port: 22
+#         script: |
+#           cd lienzo_urbano-backend

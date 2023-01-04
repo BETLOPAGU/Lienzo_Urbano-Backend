@@ -41,8 +41,8 @@ let ArtworksResolver = class ArtworksResolver {
     findAll(findArtworksInput) {
         return this.artworksService.findAll(findArtworksInput);
     }
-    findOne(id) {
-        return this.artworksService.findOne(id);
+    findOne(jwt, id) {
+        return this.artworksService.findOne(jwt.userId, id);
     }
     updateArtwork(updateArtworkInput) {
         return this.artworksService.update(updateArtworkInput.id, updateArtworkInput);
@@ -95,9 +95,11 @@ __decorate([
 ], ArtworksResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => artwork_entity_1.Artwork, { name: 'artwork', nullable: true }),
-    __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.Int })),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, jwt_decorator_1.Jwt)()),
+    __param(1, (0, graphql_1.Args)('id', { type: () => graphql_1.Int })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Object, Number]),
     __metadata("design:returntype", void 0)
 ], ArtworksResolver.prototype, "findOne", null);
 __decorate([

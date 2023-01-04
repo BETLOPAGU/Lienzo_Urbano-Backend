@@ -359,6 +359,30 @@ type AuthResponse {
   user: User!
 }
 
+type Event {
+  """ID from the event"""
+  id: Int!
+
+  """ID from the user"""
+  userId: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Type ID from the event"""
+  typeId: EventTypes!
+
+  """Creation date of the record"""
+  createdDate: DateTime
+}
+
+"""Event types supported"""
+enum EventTypes {
+  VISIT
+  COMMENT
+  FAVORITE
+}
+
 input ArtworkInput {
   """ID from the artwork"""
   id: Int!
@@ -528,6 +552,23 @@ input ReportInput {
   createdDate: DateTime
 }
 
+input EventInput {
+  """ID from the event"""
+  id: Int!
+
+  """ID from the user"""
+  userId: Int!
+
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Type ID from the event"""
+  typeId: EventTypes!
+
+  """Creation date of the record"""
+  createdDate: DateTime
+}
+
 type Query {
   artworks(filters: FindArtworksInput): [Artwork!]!
   artwork(id: Int!): Artwork
@@ -538,6 +579,7 @@ type Query {
   getListOfCommentedUsers: [User!]!
   reports(userId: Int, artworkId: Int, commentId: Int): [Report!]!
   login(loginInput: LoginInput!): AuthResponse!
+  getArtworkRecommendations(numberOfRecommendations: Int): [Artwork!]!
 }
 
 input FindArtworksInput {
@@ -687,6 +729,7 @@ type Mutation {
   createReport(createReportInput: CreateReportInput!): Report!
   updateReport(id: Int!, description: String!): Report!
   removeReport(id: Int!): Report!
+  createEvent(createEventInput: CreateEventInput!): Event!
 }
 
 input CreateArtworkInput {
@@ -985,6 +1028,17 @@ input CreateReportInput {
 
   """ID from the comment that is being reported"""
   commentId: Int
+
+  """Creation date of the record"""
+  createdDate: DateTime
+}
+
+input CreateEventInput {
+  """ID from the artwork"""
+  artworkId: Int!
+
+  """Type ID from the event"""
+  typeId: EventTypes!
 
   """Creation date of the record"""
   createdDate: DateTime

@@ -18,6 +18,7 @@ const graphql_redis_subscriptions_1 = require("graphql-redis-subscriptions");
 const prisma_service_1 = require("../prisma.service");
 const pubsub_module_1 = require("../pubsub/pubsub.module");
 const notifications_service_1 = require("../notifications/notifications.service");
+const event_types_enum_1 = require("../events/enums/event-types.enum");
 let CommentsService = class CommentsService {
     constructor(prisma, notificationsService, pubSub) {
         this.prisma = prisma;
@@ -53,6 +54,14 @@ let CommentsService = class CommentsService {
                 userId: artwork.artistId,
                 title: `${commentator.firstName} ${commentator.lastName} ha comentado tu obra de arte "${artwork.title}"`,
                 content: commentCreated.comment,
+            });
+            await this.prisma.events.create({
+                data: {
+                    artworkId,
+                    userId: artwork.artistId,
+                    typeId: event_types_enum_1.EventTypes.COMMENT,
+                    createdDate: new Date(),
+                },
             });
         }
         if (commentId) {

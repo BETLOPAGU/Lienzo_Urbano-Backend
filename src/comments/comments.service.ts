@@ -6,6 +6,7 @@ import { CreateCommentInput } from './dto/create-comment.input';
 import { Comment } from './entities/comment.entity';
 import { User } from '../users/entities/user.entity';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { EventTypes } from 'src/events/enums/event-types.enum';
 
 @Injectable()
 export class CommentsService {
@@ -58,6 +59,15 @@ export class CommentsService {
         userId: artwork.artistId,
         title: `${commentator.firstName} ${commentator.lastName} ha comentado tu obra de arte "${artwork.title}"`,
         content: commentCreated.comment,
+      });
+
+      await this.prisma.events.create({
+        data: {
+          artworkId,
+          userId: artwork.artistId,
+          typeId: EventTypes.COMMENT,
+          createdDate: new Date(),
+        },
       });
     }
 

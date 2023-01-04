@@ -15,6 +15,7 @@ const prisma_service_1 = require("../prisma.service");
 const s3_service_1 = require("../s3.service");
 const extractImageColors_1 = require("../utils/extractImageColors");
 const chroma = require("chroma-js");
+const event_types_enum_1 = require("../events/enums/event-types.enum");
 let ArtworksService = class ArtworksService {
     constructor(prisma, s3Service) {
         this.prisma = prisma;
@@ -96,8 +97,16 @@ let ArtworksService = class ArtworksService {
         }
         return artworks;
     }
-    async findOne(id) {
-        return this.prisma.artworks.findUnique({ where: { id } });
+    async findOne(userId, artworkId) {
+        await this.prisma.events.create({
+            data: {
+                artworkId,
+                userId,
+                typeId: event_types_enum_1.EventTypes.VISIT,
+                createdDate: new Date(),
+            },
+        });
+        return this.prisma.artworks.findUnique({ where: { id: artworkId } });
     }
     async update(id, updateArtworkInput) {
         const extraProps = this.deleteExtraProps(updateArtworkInput);
@@ -119,11 +128,26 @@ let ArtworksService = class ArtworksService {
             where: { artworkId, userId },
         });
         if (favoriteArtworkRecord) {
+            await this.prisma.events.deleteMany({
+                where: {
+                    artworkId,
+                    userId,
+                    typeId: event_types_enum_1.EventTypes.FAVORITE,
+                },
+            });
             return this.prisma.favoritesArtworks.delete({
                 where: { id: favoriteArtworkRecord.id },
             });
         }
         else {
+            await this.prisma.events.create({
+                data: {
+                    artworkId,
+                    userId,
+                    typeId: event_types_enum_1.EventTypes.FAVORITE,
+                    createdDate: new Date(),
+                },
+            });
             return this.prisma.favoritesArtworks.create({
                 data: {
                     createdDate: new Date(),
