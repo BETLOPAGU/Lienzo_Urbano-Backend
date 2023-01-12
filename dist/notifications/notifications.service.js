@@ -48,6 +48,22 @@ let NotificationsService = class NotificationsService {
             where: { id },
         });
     }
+    async createGlobalNotification(userId, createNotificationInput) {
+        const defaultType = notification_types_enum_1.NotificationTypes.SUCCESS;
+        const notification = await this.prisma.notifications.create({
+            data: {
+                userId,
+                typeId: createNotificationInput.typeId || defaultType,
+                title: createNotificationInput.title || 'Notificación',
+                content: createNotificationInput.content,
+                createdDate: new Date(),
+            },
+        });
+        this.pubSub.publish(`GLOBAL_NOTIFICATIONS`, {
+            userNotifications: notification,
+        });
+        return notification;
+    }
     async remove(id) {
         return this.prisma.notifications.delete({ where: { id } });
     }

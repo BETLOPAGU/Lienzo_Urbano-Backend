@@ -49,6 +49,29 @@ export class NotificationsService {
     });
   }
 
+  async createGlobalNotification(
+    userId: number,
+    createNotificationInput: CreateNotificationInput,
+  ): Promise<Notification> {
+    const defaultType = NotificationTypes.SUCCESS;
+
+    const notification = await this.prisma.notifications.create({
+      data: {
+        userId,
+        typeId: createNotificationInput.typeId || defaultType,
+        title: createNotificationInput.title || 'Notificación',
+        content: createNotificationInput.content,
+        createdDate: new Date(),
+      },
+    });
+
+    this.pubSub.publish(`GLOBAL_NOTIFICATIONS`, {
+      userNotifications: notification,
+    });
+
+    return notification;
+  }
+
   async remove(id: number): Promise<Notification> {
     return this.prisma.notifications.delete({ where: { id } });
   }

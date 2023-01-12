@@ -14,6 +14,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { PUB_SUB } from 'src/pubsub/pubsub.module';
+import { CreateNotificationInput } from './dto/create-notification.input';
 
 @Resolver(() => Notification)
 export class NotificationsResolver {
@@ -26,6 +27,19 @@ export class NotificationsResolver {
   @UseGuards(JwtAuthGuard)
   findAll(@Jwt() jwt: JwtPayload) {
     return this.notificationsService.findAll(jwt.userId);
+  }
+
+  @Mutation(() => Notification)
+  @UseGuards(JwtAuthGuard)
+  createGlobalNotification(
+    @Jwt() jwt: JwtPayload,
+    @Args('createNotificationInput')
+    createNotificationInput: CreateNotificationInput,
+  ) {
+    return this.notificationsService.createGlobalNotification(
+      jwt.userId,
+      createNotificationInput,
+    );
   }
 
   @Mutation(() => Notification)
