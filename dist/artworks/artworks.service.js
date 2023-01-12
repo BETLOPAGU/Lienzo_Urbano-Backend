@@ -88,7 +88,7 @@ let ArtworksService = class ArtworksService {
             const artworksFilteredByColor = artworks.filter((artwork) => {
                 var _a;
                 const avgColor = (_a = artwork.artworksColors.find((c) => c.color.startsWith('AVG'))) === null || _a === void 0 ? void 0 : _a.color;
-                if (!avgColor)
+                if (!avgColor || typeof avgColor !== 'string')
                     return false;
                 const distance = chroma.distance(avgColor.replace('AVG', ''), color);
                 return distance < minimunDistance;

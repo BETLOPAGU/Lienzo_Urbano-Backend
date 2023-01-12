@@ -31,6 +31,7 @@ export class ArtworksResolver {
   constructor(private readonly artworksService: ArtworksService) {}
 
   @Mutation(() => Artwork)
+  @UseGuards(JwtAuthGuard)
   createArtwork(
     @Jwt([UserTypes.ARTIST, UserTypes.ADMIN]) jwt: JwtPayload,
     @Args('createArtworkInput') createArtworkInput: CreateArtworkInput,

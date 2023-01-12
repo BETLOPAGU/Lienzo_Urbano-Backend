@@ -112,7 +112,7 @@ export class ArtworksService {
         const avgColor = artwork.artworksColors.find((c) =>
           c.color.startsWith('AVG'),
         )?.color;
-        if (!avgColor) return false;
+        if (!avgColor || typeof avgColor !== 'string') return false;
 
         const distance = chroma.distance(avgColor.replace('AVG', ''), color);
         return distance < minimunDistance;
