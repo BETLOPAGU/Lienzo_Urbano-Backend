@@ -24,6 +24,30 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], FindArtworksInput.prototype, "color", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [String], {
+        description: `Artistic movements`,
+        nullable: true,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], FindArtworksInput.prototype, "movements", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [String], {
+        description: `Artistic tags`,
+        nullable: true,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], FindArtworksInput.prototype, "tags", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [String], {
+        description: `Artistic materials`,
+        nullable: true,
+    }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], FindArtworksInput.prototype, "materials", void 0);
 FindArtworksInput = __decorate([
     (0, graphql_1.InputType)()
 ], FindArtworksInput);

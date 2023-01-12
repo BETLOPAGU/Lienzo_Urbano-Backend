@@ -11,4 +11,25 @@ export class FindArtworksInput extends PartialType(Artwork) {
   @IsString()
   @IsOptional()
   color?: string;
+
+  @Field(() => [String], {
+    description: `Artistic movements`,
+    nullable: true,
+  })
+  @IsOptional()
+  movements?: string;
+
+  @Field(() => [String], {
+    description: `Artistic tags`,
+    nullable: true,
+  })
+  @IsOptional()
+  tags?: string;
+
+  @Field(() => [String], {
+    description: `Artistic materials`,
+    nullable: true,
+  })
+  @IsOptional()
+  materials?: string;
 }

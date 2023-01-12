@@ -101,9 +101,23 @@ export class ArtworksService {
     const color = findArtworksInput.color;
     delete findArtworksInput.color;
 
+    const movements = findArtworksInput.movements;
+    delete findArtworksInput.movements;
+
+    const tags = findArtworksInput.tags;
+    delete findArtworksInput.tags;
+
+    const materials = findArtworksInput.materials;
+    delete findArtworksInput.materials;
+
     let artworks = await this.prisma.artworks.findMany({
       where: { ...findArtworksInput, isDeleted: false },
-      include: { artworksColors: true },
+      include: {
+        artworksColors: true,
+        artworksMovements: true,
+        artworksTags: true,
+        artworksMaterials: true,
+      },
     });
 
     if (color) {
@@ -118,6 +132,31 @@ export class ArtworksService {
         return distance < minimunDistance;
       });
       artworks = artworksFilteredByColor;
+    }
+
+    if (movements) {
+      const artworksFilteredByMovement = artworks.filter((artwork) => {
+        return artwork.artworksMovements.some((m) =>
+          movements.includes(m.movement),
+        );
+      });
+      artworks = artworksFilteredByMovement;
+    }
+
+    if (tags) {
+      const artworksFilteredByTag = artworks.filter((artwork) => {
+        return artwork.artworksTags.some((t) => tags.includes(t.tag));
+      });
+      artworks = artworksFilteredByTag;
+    }
+
+    if (materials) {
+      const artworksFilteredByMaterial = artworks.filter((artwork) => {
+        return artwork.artworksMaterials.some((m) =>
+          materials.includes(m.material),
+        );
+      });
+      artworks = artworksFilteredByMaterial;
     }
 
     return artworks;

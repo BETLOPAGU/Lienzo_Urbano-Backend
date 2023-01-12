@@ -668,6 +668,15 @@ input FindArtworksInput {
   Computes the Euclidean distance between this color ant the colors of all artworks
   """
   color: String
+
+  """Artistic movements"""
+  movements: [String!]
+
+  """Artistic tags"""
+  tags: [String!]
+
+  """Artistic materials"""
+  materials: [String!]
 }
 
 input FindUsersInput {
