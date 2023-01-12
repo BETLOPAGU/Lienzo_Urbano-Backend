@@ -88,7 +88,34 @@ let CommentsService = class CommentsService {
             },
         });
     }
-    async getListOfCommentedUsers(commentatorId) {
+    async chatConversation(currentUserId, userId) {
+        return this.prisma.comments.findMany({
+            where: {
+                OR: [
+                    {
+                        AND: [
+                            {
+                                commentatorId: currentUserId,
+                                userId: userId,
+                            },
+                        ],
+                    },
+                    {
+                        AND: [
+                            {
+                                commentatorId: userId,
+                                userId: currentUserId,
+                            },
+                        ],
+                    },
+                ],
+            },
+            orderBy: {
+                id: 'desc',
+            },
+        });
+    }
+    async listOfCommentedUsers(commentatorId) {
         const comments = await this.prisma.comments.groupBy({
             by: ['userId'],
             where: {

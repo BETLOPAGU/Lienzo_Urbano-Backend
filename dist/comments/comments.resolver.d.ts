@@ -10,7 +10,8 @@ export declare class CommentsResolver {
     constructor(commentsService: CommentsService, pubSub: RedisPubSub);
     createComment(jwt: JwtPayload, createCommentInput: CreateCommentInput): Promise<Comment>;
     findAll(userId?: number, artworkId?: number, commentId?: number): Promise<Comment[]>;
-    getListOfCommentedUsers(jwt: JwtPayload): Promise<User[]>;
+    chatConversation(jwt: JwtPayload, userId: number): Promise<Comment[]>;
+    listOfCommentedUsers(jwt: JwtPayload): Promise<User[]>;
     updateComment(id: number, comment: string): Promise<Comment>;
     removeComment(id: number): Promise<Comment>;
     commentAdded(userId?: number, artworkId?: number, commentId?: number): AsyncIterator<unknown, any, undefined>;

@@ -15,7 +15,8 @@ export declare class CommentsService {
         artworkId?: number;
         commentId?: number;
     }): Promise<Comment[]>;
-    getListOfCommentedUsers(commentatorId: number): Promise<User[]>;
+    chatConversation(currentUserId: number, userId: number): Promise<Comment[]>;
+    listOfCommentedUsers(commentatorId: number): Promise<User[]>;
     update(id: number, comment: string): Promise<Comment>;
     remove(id: number): Promise<Comment>;
 }
