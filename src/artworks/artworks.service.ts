@@ -7,7 +7,6 @@ import { Artwork } from './entities/artwork.entity';
 import { FavoriteArtwork } from './entities/favoriteArtwork.entity';
 import { ArtworkCollaborator } from './entities/artworkCollaborator.entity';
 import { ArtworkTag } from './entities/artworkTag.entity';
-import { ArtworkAddress } from './entities/artworkAddress.entity';
 import { ArtworkColor } from './entities/artworkColor.entity';
 import { ArtworkMovement } from './entities/artworkMovement.entity';
 import { ArtworkMaterial } from './entities/artworkMaterial.entity';
@@ -16,12 +15,14 @@ import { S3Service } from 'src/s3.service';
 import { extractImageColors } from 'src/utils/extractImageColors';
 import * as chroma from 'chroma-js';
 import { EventTypes } from 'src/events/enums/event-types.enum';
+import { RedisService } from 'src/redis.service';
 
 @Injectable()
 export class ArtworksService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly s3Service: S3Service,
+    private readonly redisService: RedisService,
   ) {}
 
   deleteExtraProps(input: CreateArtworkInput | UpdateArtworkInput) {
@@ -88,7 +89,6 @@ export class ArtworksService {
 
     await this.overwriteCollaborators(artwork.id, extraProps.collaborators);
     await this.overwriteTags(artwork.id, extraProps.tags);
-    await this.overwriteAddresses(artwork.id, extraProps.addresses);
     await this.overwriteMovements(artwork.id, extraProps.movements);
     await this.overwriteMaterials(artwork.id, extraProps.materials);
 
@@ -101,7 +101,7 @@ export class ArtworksService {
     const color = findArtworksInput.color;
     delete findArtworksInput.color;
 
-    const artworks = await this.prisma.artworks.findMany({
+    let artworks = await this.prisma.artworks.findMany({
       where: { ...findArtworksInput, isDeleted: false },
       include: { artworksColors: true },
     });
@@ -117,10 +117,28 @@ export class ArtworksService {
         const distance = chroma.distance(avgColor.replace('AVG', ''), color);
         return distance < minimunDistance;
       });
-      return artworksFilteredByColor;
+      artworks = artworksFilteredByColor;
     }
 
     return artworks;
+  }
+
+  async findByGeoRadius(userId: number, radius: number): Promise<Artwork[]> {
+    const user = await this.prisma.users.findUnique({ where: { id: userId } });
+
+    const artworkIds = await this.redisService.getArtworksOnRadius({
+      longitude: user.longitude || -115.17258,
+      latitude: user.latitude || 36.11996,
+      radius: radius,
+    });
+
+    return this.prisma.artworks.findMany({
+      where: {
+        id: {
+          in: artworkIds,
+        },
+      },
+    });
   }
 
   async findOne(userId: number, artworkId: number): Promise<Artwork> {
@@ -142,7 +160,6 @@ export class ArtworksService {
     const extraProps = this.deleteExtraProps(updateArtworkInput);
     await this.overwriteCollaborators(id, extraProps.collaborators);
     await this.overwriteTags(id, extraProps.tags);
-    await this.overwriteAddresses(id, extraProps.addresses);
     await this.overwriteMovements(id, extraProps.movements);
     await this.overwriteMaterials(id, extraProps.materials);
 
@@ -250,31 +267,6 @@ export class ArtworksService {
 
   async tags(artwork: Artwork): Promise<ArtworkTag[]> {
     return this.prisma.artworksTags.findMany({
-      where: { artworkId: artwork.id },
-    });
-  }
-
-  async overwriteAddresses(
-    artworkId: number,
-    addresses?: string[],
-  ): Promise<number> {
-    if (!addresses || addresses.length === 0) return 0;
-
-    await this.prisma.artworksAddresses.deleteMany({
-      where: { artworkId },
-    });
-
-    const result = this.prisma.artworksAddresses.createMany({
-      data: addresses.map((address) => ({
-        address,
-        artworkId,
-      })),
-    });
-    return (await result).count;
-  }
-
-  async addresses(artwork: Artwork): Promise<ArtworkAddress[]> {
-    return this.prisma.artworksAddresses.findMany({
       where: { artworkId: artwork.id },
     });
   }

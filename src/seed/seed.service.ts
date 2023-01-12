@@ -11,10 +11,14 @@ import { Collection } from '../collections/entities/collection.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { Report } from 'src/reports/entities/report.entity';
 import { PrismaService } from 'src/prisma.service';
+import { RedisService } from '../redis.service';
+import { CreateArtworkInput } from 'src/artworks/dto/create-artwork.input';
+import { CreateUserInput } from 'src/users/dto/create-user.input';
 @Injectable()
 export class SeedService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly redisService: RedisService,
     private readonly artworksService: ArtworksService,
     private readonly usersService: UsersService,
     private readonly collectionsService: CollectionsService,
@@ -23,20 +27,9 @@ export class SeedService {
   ) {}
 
   async populateDB(): Promise<boolean> {
-    await this.createSeedUser();
+    await this.createSeedUsers();
+    await this.createSeedArtworks();
 
-    for (let i = 0; i < 10; i++) {
-      await this.createSeedUser();
-    }
-    const id = await this.getRandomUserId();
-    await this.prisma.users.update({
-      data: { email: 'gerardo@arceo.com' },
-      where: { id },
-    });
-
-    for (let i = 0; i < 10; i++) {
-      await this.createSeedArtwork();
-    }
     for (let i = 0; i < 10; i++) {
       await this.createSeedCollection();
     }
@@ -55,10 +48,9 @@ export class SeedService {
     return true;
   }
 
-  async deleteDataFromDB(): Promise<boolean> {
+  async resetDataFromDB(): Promise<boolean> {
     await this.prisma.artworkCollections.deleteMany();
     await this.prisma.artworks.deleteMany();
-    await this.prisma.artworksAddresses.deleteMany();
     await this.prisma.artworksCollaborators.deleteMany();
     await this.prisma.artworksColors.deleteMany();
     await this.prisma.artworksMaterials.deleteMany();
@@ -73,6 +65,11 @@ export class SeedService {
     await this.prisma.reports.deleteMany();
     await this.prisma.users.deleteMany();
     await this.prisma.usersRatings.deleteMany();
+
+    await this.redisService.deleteArtworkGeolocations();
+
+    await this.populateDB();
+
     return true;
   }
 
@@ -86,57 +83,68 @@ export class SeedService {
     return artworks[Math.floor(Math.random() * artworks.length)].id;
   }
 
-  async createSeedUser(): Promise<User> {
-    const random = Math.floor(Math.random() * 100000);
-
-    const user = await this.usersService.create({
-      email: `email-${random}@gerardoarceo.com`,
-      pass: `password`,
-      firstName: `Nombre-${random}`,
-      lastName: `Apellido-${random}`,
-      typeId: UserTypes.ARTIST,
-      address: `Direccion-${random}`,
-      birthdate: new Date(),
-      contact: `Contacto-${random}`,
-      createdDate: new Date(),
-      gender: `Masculino`,
-      phone: Math.floor(Math.random() * 10000000000) + '',
-      photoUrl:
-        'https://newprofilepic2.photo-cdn.net//assets/images/article/profile.jpg',
-      isDeleted: false,
-    });
-
+  async createSeedUser(createUserInput: CreateUserInput) {
+    console.log(createUserInput);
+    const user = await this.usersService.create(createUserInput);
     this.usersService.followUnfollow(user.id, await this.getRandomUserId());
-
-    return user;
   }
 
-  async createSeedArtwork(): Promise<Artwork> {
-    const random = Math.floor(Math.random() * 100000);
+  async createSeedUsers() {
+    await this.createSeedUser({
+      email: `gerardo@arceo.com`,
+      pass: `password`,
+      firstName: `Gerardo`,
+      lastName: `Arceo`,
+      typeId: UserTypes.ARTIST,
+      address: `Avenida de los Maestros #49`,
+      birthdate: new Date('1999-06-09'),
+      contact: `Instagram: GerardoArceo`,
+      createdDate: new Date(),
+      gender: `Masculino`,
+      phone: '5571777917',
+      photoUrl: 'https://gerardoarceo.com/team/gerardoarceo/photo.jpg',
+      isDeleted: false,
+    });
+    await this.createSeedUser({
+      email: `angelmimoso@gmail.com`,
+      pass: `password`,
+      firstName: `José`,
+      lastName: `Mimoso`,
+      typeId: UserTypes.ARTIST,
+      address: `Avenida Mixcoac`,
+      birthdate: new Date('1989-02-05'),
+      contact: `Instagram: AngelMimoso`,
+      createdDate: new Date(),
+      gender: `Masculino`,
+      phone: '5583957284',
+      photoUrl:
+        'https://instagram.fmex5-1.fna.fbcdn.net/v/t51.2885-19/269859382_217845217165904_808443587197205825_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fmex5-1.fna.fbcdn.net&_nc_cat=108&_nc_ohc=YZKA3RSRgLUAX9ES7ii&tn=yhMhqkVARt0UXrxL&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfDYsL6M9_RducGeEISKHNklZ8IRsUpBO_JPGUa9u3tQog&oe=63C5D9CA&_nc_sid=8fd12b',
+      isDeleted: false,
+    });
+    await this.createSeedUser({
+      email: `nbla.escom@gmail.com`,
+      pass: `password`,
+      firstName: `Nadia`,
+      lastName: `López`,
+      typeId: UserTypes.ARTIST,
+      address: `Avenida San Antonio #7`,
+      birthdate: new Date('1999-03-04'),
+      contact: `Instagram: nbla.escom`,
+      createdDate: new Date(),
+      gender: `Femenino`,
+      phone: '5536259764',
+      photoUrl:
+        'https://scontent.fmex5-1.fna.fbcdn.net/v/t39.30808-6/277310508_1041055959951297_8884364682328919510_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=n99IsCHc7UUAX8Pe9U-&_nc_ht=scontent.fmex5-1.fna&oh=00_AfBhdSylY5BPwpAPMBTb3G_OyHCJbvuohvZoTPz6wNTFnQ&oe=63C4512C',
+      isDeleted: false,
+    });
+  }
 
+  async createSeedArtwork(
+    createArtworkInput: CreateArtworkInput,
+  ): Promise<Artwork> {
     const artwork = await this.artworksService.create(
       await this.getRandomUserId(),
-      {
-        title: `Artwork-${random}`,
-        description: `Description-${random}`,
-        createdDate: new Date(),
-        imageUrl:
-          'https://i.pinimg.com/originals/a0/57/5b/a0575b7cf9a3bf8b53e474b4f944b31a.jpg',
-        minWidth: 5,
-        maxWidth: 7,
-        minHeight: 6,
-        maxHeight: 8,
-        minPrice: 5000,
-        maxPrice: 10000,
-        minWorkingHours: 50,
-        maxWorkingHours: 60,
-        isDeleted: false,
-        collaborators: [await this.getRandomUserId()],
-        tags: [`Tag-${random}`],
-        addresses: [`Address-${random}`],
-        materials: ['Pintura metálica', 'Aerosol'],
-        movements: ['Cubista', 'Realista'],
-      },
+      createArtworkInput,
     );
 
     this.artworksService.markUnmarkFavorite(
@@ -145,6 +153,31 @@ export class SeedService {
     );
 
     return artwork;
+  }
+
+  async createSeedArtworks() {
+    await this.createSeedArtwork({
+      title: `Cuidadores del café`,
+      description: `Mural en Starbucks reserve bar`,
+      createdDate: new Date(),
+      imageUrl:
+        'https://instagram.fmex5-1.fna.fbcdn.net/v/t51.2885-15/66526292_2326520270777530_6540551794835468939_n.jpg?stp=dst-jpg_e35&_nc_ht=instagram.fmex5-1.fna.fbcdn.net&_nc_cat=110&_nc_ohc=bWCIBg4VsRsAX_hCD7k&edm=AGenrX8BAAAA&ccb=7-5&oh=00_AfCGI_-O2skVcP4ztoF5fm3UXi4oW0pj4NIhQHU1K31PhQ&oe=63C524B8&_nc_sid=5eceaa',
+      minWidth: 5,
+      maxWidth: 7,
+      minHeight: 6,
+      maxHeight: 8,
+      minPrice: 5000,
+      maxPrice: 10000,
+      minWorkingHours: 50,
+      maxWorkingHours: 60,
+      isDeleted: false,
+      collaborators: [await this.getRandomUserId()],
+      tags: [`México`, `Prehispánico`, `Naturaleza`],
+      address:
+        'Anillo Perif. 4690-Local 860, Insurgentes Cuicuilco, Coyoacán, 04530 Ciudad de México, CDMX',
+      materials: ['Aerosol'],
+      movements: ['Surreal'],
+    });
   }
 
   async createSeedCollection(): Promise<Collection> {

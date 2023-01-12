@@ -18,9 +18,11 @@ const collections_service_1 = require("../collections/collections.service");
 const reports_service_1 = require("../reports/reports.service");
 const comments_service_1 = require("../comments/comments.service");
 const prisma_service_1 = require("../prisma.service");
+const redis_service_1 = require("../redis.service");
 let SeedService = class SeedService {
-    constructor(prisma, artworksService, usersService, collectionsService, commentsService, reportsService) {
+    constructor(prisma, redisService, artworksService, usersService, collectionsService, commentsService, reportsService) {
         this.prisma = prisma;
+        this.redisService = redisService;
         this.artworksService = artworksService;
         this.usersService = usersService;
         this.collectionsService = collectionsService;
@@ -28,18 +30,8 @@ let SeedService = class SeedService {
         this.reportsService = reportsService;
     }
     async populateDB() {
-        await this.createSeedUser();
-        for (let i = 0; i < 10; i++) {
-            await this.createSeedUser();
-        }
-        const id = await this.getRandomUserId();
-        await this.prisma.users.update({
-            data: { email: 'gerardo@arceo.com' },
-            where: { id },
-        });
-        for (let i = 0; i < 10; i++) {
-            await this.createSeedArtwork();
-        }
+        await this.createSeedUsers();
+        await this.createSeedArtworks();
         for (let i = 0; i < 10; i++) {
             await this.createSeedCollection();
         }
@@ -57,10 +49,9 @@ let SeedService = class SeedService {
         }
         return true;
     }
-    async deleteDataFromDB() {
+    async resetDataFromDB() {
         await this.prisma.artworkCollections.deleteMany();
         await this.prisma.artworks.deleteMany();
-        await this.prisma.artworksAddresses.deleteMany();
         await this.prisma.artworksCollaborators.deleteMany();
         await this.prisma.artworksColors.deleteMany();
         await this.prisma.artworksMaterials.deleteMany();
@@ -75,6 +66,8 @@ let SeedService = class SeedService {
         await this.prisma.reports.deleteMany();
         await this.prisma.users.deleteMany();
         await this.prisma.usersRatings.deleteMany();
+        await this.redisService.deleteArtworkGeolocations();
+        await this.populateDB();
         return true;
     }
     async getRandomUserId() {
@@ -85,33 +78,69 @@ let SeedService = class SeedService {
         const artworks = await this.artworksService.findAll();
         return artworks[Math.floor(Math.random() * artworks.length)].id;
     }
-    async createSeedUser() {
-        const random = Math.floor(Math.random() * 100000);
-        const user = await this.usersService.create({
-            email: `email-${random}@gerardoarceo.com`,
+    async createSeedUser(createUserInput) {
+        console.log(createUserInput);
+        const user = await this.usersService.create(createUserInput);
+        this.usersService.followUnfollow(user.id, await this.getRandomUserId());
+    }
+    async createSeedUsers() {
+        await this.createSeedUser({
+            email: `gerardo@arceo.com`,
             pass: `password`,
-            firstName: `Nombre-${random}`,
-            lastName: `Apellido-${random}`,
+            firstName: `Gerardo`,
+            lastName: `Arceo`,
             typeId: user_types_enum_1.UserTypes.ARTIST,
-            address: `Direccion-${random}`,
-            birthdate: new Date(),
-            contact: `Contacto-${random}`,
+            address: `Avenida de los Maestros #49`,
+            birthdate: new Date('1999-06-09'),
+            contact: `Instagram: GerardoArceo`,
             createdDate: new Date(),
             gender: `Masculino`,
-            phone: Math.floor(Math.random() * 10000000000) + '',
-            photoUrl: 'https://newprofilepic2.photo-cdn.net//assets/images/article/profile.jpg',
+            phone: '5571777917',
+            photoUrl: 'https://gerardoarceo.com/team/gerardoarceo/photo.jpg',
             isDeleted: false,
         });
-        this.usersService.followUnfollow(user.id, await this.getRandomUserId());
-        return user;
-    }
-    async createSeedArtwork() {
-        const random = Math.floor(Math.random() * 100000);
-        const artwork = await this.artworksService.create(await this.getRandomUserId(), {
-            title: `Artwork-${random}`,
-            description: `Description-${random}`,
+        await this.createSeedUser({
+            email: `angelmimoso@gmail.com`,
+            pass: `password`,
+            firstName: `José`,
+            lastName: `Mimoso`,
+            typeId: user_types_enum_1.UserTypes.ARTIST,
+            address: `Avenida Mixcoac`,
+            birthdate: new Date('1989-02-05'),
+            contact: `Instagram: AngelMimoso`,
             createdDate: new Date(),
-            imageUrl: 'https://i.pinimg.com/originals/a0/57/5b/a0575b7cf9a3bf8b53e474b4f944b31a.jpg',
+            gender: `Masculino`,
+            phone: '5583957284',
+            photoUrl: 'https://instagram.fmex5-1.fna.fbcdn.net/v/t51.2885-19/269859382_217845217165904_808443587197205825_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fmex5-1.fna.fbcdn.net&_nc_cat=108&_nc_ohc=YZKA3RSRgLUAX9ES7ii&tn=yhMhqkVARt0UXrxL&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfDYsL6M9_RducGeEISKHNklZ8IRsUpBO_JPGUa9u3tQog&oe=63C5D9CA&_nc_sid=8fd12b',
+            isDeleted: false,
+        });
+        await this.createSeedUser({
+            email: `nbla.escom@gmail.com`,
+            pass: `password`,
+            firstName: `Nadia`,
+            lastName: `López`,
+            typeId: user_types_enum_1.UserTypes.ARTIST,
+            address: `Avenida San Antonio #7`,
+            birthdate: new Date('1999-03-04'),
+            contact: `Instagram: nbla.escom`,
+            createdDate: new Date(),
+            gender: `Femenino`,
+            phone: '5536259764',
+            photoUrl: 'https://scontent.fmex5-1.fna.fbcdn.net/v/t39.30808-6/277310508_1041055959951297_8884364682328919510_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=n99IsCHc7UUAX8Pe9U-&_nc_ht=scontent.fmex5-1.fna&oh=00_AfBhdSylY5BPwpAPMBTb3G_OyHCJbvuohvZoTPz6wNTFnQ&oe=63C4512C',
+            isDeleted: false,
+        });
+    }
+    async createSeedArtwork(createArtworkInput) {
+        const artwork = await this.artworksService.create(await this.getRandomUserId(), createArtworkInput);
+        this.artworksService.markUnmarkFavorite(await this.getRandomUserId(), artwork.id);
+        return artwork;
+    }
+    async createSeedArtworks() {
+        await this.createSeedArtwork({
+            title: `Cuidadores del café`,
+            description: `Mural en Starbucks reserve bar`,
+            createdDate: new Date(),
+            imageUrl: 'https://instagram.fmex5-1.fna.fbcdn.net/v/t51.2885-15/66526292_2326520270777530_6540551794835468939_n.jpg?stp=dst-jpg_e35&_nc_ht=instagram.fmex5-1.fna.fbcdn.net&_nc_cat=110&_nc_ohc=bWCIBg4VsRsAX_hCD7k&edm=AGenrX8BAAAA&ccb=7-5&oh=00_AfCGI_-O2skVcP4ztoF5fm3UXi4oW0pj4NIhQHU1K31PhQ&oe=63C524B8&_nc_sid=5eceaa',
             minWidth: 5,
             maxWidth: 7,
             minHeight: 6,
@@ -122,13 +151,11 @@ let SeedService = class SeedService {
             maxWorkingHours: 60,
             isDeleted: false,
             collaborators: [await this.getRandomUserId()],
-            tags: [`Tag-${random}`],
-            addresses: [`Address-${random}`],
-            materials: ['Pintura metálica', 'Aerosol'],
-            movements: ['Cubista', 'Realista'],
+            tags: [`México`, `Prehispánico`, `Naturaleza`],
+            address: 'Anillo Perif. 4690-Local 860, Insurgentes Cuicuilco, Coyoacán, 04530 Ciudad de México, CDMX',
+            materials: ['Aerosol'],
+            movements: ['Surreal'],
         });
-        this.artworksService.markUnmarkFavorite(await this.getRandomUserId(), artwork.id);
-        return artwork;
     }
     async createSeedCollection() {
         const random = Math.floor(Math.random() * 100000);
@@ -177,6 +204,7 @@ let SeedService = class SeedService {
 SeedService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        redis_service_1.RedisService,
         artworks_service_1.ArtworksService,
         users_service_1.UsersService,
         collections_service_1.CollectionsService,

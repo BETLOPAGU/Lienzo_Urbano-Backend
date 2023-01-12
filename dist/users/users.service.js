@@ -138,6 +138,14 @@ let UsersService = class UsersService {
             });
         }
     }
+    async followedArtists(userId) {
+        const result = await this.prisma.followers.findMany({
+            where: { followerId: userId },
+            include: { users: true },
+        });
+        const followers = result.map((f) => f.users);
+        return followers;
+    }
     async followers(user) {
         const result = await this.prisma.followers.findMany({
             where: { userId: user.id },

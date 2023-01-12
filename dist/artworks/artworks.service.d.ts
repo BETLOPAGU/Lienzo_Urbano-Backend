@@ -6,16 +6,17 @@ import { Artwork } from './entities/artwork.entity';
 import { FavoriteArtwork } from './entities/favoriteArtwork.entity';
 import { ArtworkCollaborator } from './entities/artworkCollaborator.entity';
 import { ArtworkTag } from './entities/artworkTag.entity';
-import { ArtworkAddress } from './entities/artworkAddress.entity';
 import { ArtworkColor } from './entities/artworkColor.entity';
 import { ArtworkMovement } from './entities/artworkMovement.entity';
 import { ArtworkMaterial } from './entities/artworkMaterial.entity';
 import { User } from 'src/users/entities/user.entity';
 import { S3Service } from 'src/s3.service';
+import { RedisService } from 'src/redis.service';
 export declare class ArtworksService {
     private readonly prisma;
     private readonly s3Service;
-    constructor(prisma: PrismaService, s3Service: S3Service);
+    private readonly redisService;
+    constructor(prisma: PrismaService, s3Service: S3Service, redisService: RedisService);
     deleteExtraProps(input: CreateArtworkInput | UpdateArtworkInput): {
         photo: string;
         collaborators: number[];
@@ -26,6 +27,7 @@ export declare class ArtworksService {
     };
     create(artistId: number, createArtworkInput: CreateArtworkInput): Promise<Artwork>;
     findAll(findArtworksInput?: FindArtworksInput): Promise<Artwork[]>;
+    findByGeoRadius(userId: number, radius: number): Promise<Artwork[]>;
     findOne(userId: number, artworkId: number): Promise<Artwork>;
     update(id: number, updateArtworkInput: UpdateArtworkInput): Promise<Artwork>;
     remove(id: number): Promise<Artwork>;
@@ -35,8 +37,6 @@ export declare class ArtworksService {
     collaborators(artwork: Artwork): Promise<ArtworkCollaborator[]>;
     overwriteTags(artworkId: number, tags?: string[]): Promise<number>;
     tags(artwork: Artwork): Promise<ArtworkTag[]>;
-    overwriteAddresses(artworkId: number, addresses?: string[]): Promise<number>;
-    addresses(artwork: Artwork): Promise<ArtworkAddress[]>;
     overwriteColors(artworkId: number, colors?: string[]): Promise<number>;
     colors(artwork: Artwork): Promise<ArtworkColor[]>;
     overwriteMovements(artworkId: number, movements?: string[]): Promise<number>;

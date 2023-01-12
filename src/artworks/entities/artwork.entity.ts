@@ -104,6 +104,30 @@ export class Artwork {
   @IsOptional()
   maxWidth?: number;
 
+  @Field(() => String, {
+    nullable: true,
+    description: `Address from the artwork`,
+  })
+  @IsString()
+  @IsOptional()
+  address?: string;
+
+  @Field(() => Float, {
+    nullable: true,
+    description: `Geo longitude from the address of the artwork`,
+  })
+  @IsNumber()
+  @IsOptional()
+  longitude?: number;
+
+  @Field(() => Float, {
+    nullable: true,
+    description: `Geo latitude from the address of the artwork`,
+  })
+  @IsNumber()
+  @IsOptional()
+  latitude?: number;
+
   @Field(() => Date, {
     nullable: true,
     description: `Publication date of the artwork`,

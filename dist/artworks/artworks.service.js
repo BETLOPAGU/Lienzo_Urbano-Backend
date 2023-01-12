@@ -16,10 +16,12 @@ const s3_service_1 = require("../s3.service");
 const extractImageColors_1 = require("../utils/extractImageColors");
 const chroma = require("chroma-js");
 const event_types_enum_1 = require("../events/enums/event-types.enum");
+const redis_service_1 = require("../redis.service");
 let ArtworksService = class ArtworksService {
-    constructor(prisma, s3Service) {
+    constructor(prisma, s3Service, redisService) {
         this.prisma = prisma;
         this.s3Service = s3Service;
+        this.redisService = redisService;
     }
     deleteExtraProps(input) {
         const photo = input.photo;
@@ -69,7 +71,6 @@ let ArtworksService = class ArtworksService {
         }
         await this.overwriteCollaborators(artwork.id, extraProps.collaborators);
         await this.overwriteTags(artwork.id, extraProps.tags);
-        await this.overwriteAddresses(artwork.id, extraProps.addresses);
         await this.overwriteMovements(artwork.id, extraProps.movements);
         await this.overwriteMaterials(artwork.id, extraProps.materials);
         return artwork;
@@ -79,7 +80,7 @@ let ArtworksService = class ArtworksService {
             findArtworksInput = {};
         const color = findArtworksInput.color;
         delete findArtworksInput.color;
-        const artworks = await this.prisma.artworks.findMany({
+        let artworks = await this.prisma.artworks.findMany({
             where: Object.assign(Object.assign({}, findArtworksInput), { isDeleted: false }),
             include: { artworksColors: true },
         });
@@ -93,9 +94,24 @@ let ArtworksService = class ArtworksService {
                 const distance = chroma.distance(avgColor.replace('AVG', ''), color);
                 return distance < minimunDistance;
             });
-            return artworksFilteredByColor;
+            artworks = artworksFilteredByColor;
         }
         return artworks;
+    }
+    async findByGeoRadius(userId, radius) {
+        const user = await this.prisma.users.findUnique({ where: { id: userId } });
+        const artworkIds = await this.redisService.getArtworksOnRadius({
+            longitude: user.longitude || -115.17258,
+            latitude: user.latitude || 36.11996,
+            radius: radius,
+        });
+        return this.prisma.artworks.findMany({
+            where: {
+                id: {
+                    in: artworkIds,
+                },
+            },
+        });
     }
     async findOne(userId, artworkId) {
         await this.prisma.events.create({
@@ -112,7 +128,6 @@ let ArtworksService = class ArtworksService {
         const extraProps = this.deleteExtraProps(updateArtworkInput);
         await this.overwriteCollaborators(id, extraProps.collaborators);
         await this.overwriteTags(id, extraProps.tags);
-        await this.overwriteAddresses(id, extraProps.addresses);
         await this.overwriteMovements(id, extraProps.movements);
         await this.overwriteMaterials(id, extraProps.materials);
         return this.prisma.artworks.update({
@@ -205,25 +220,6 @@ let ArtworksService = class ArtworksService {
             where: { artworkId: artwork.id },
         });
     }
-    async overwriteAddresses(artworkId, addresses) {
-        if (!addresses || addresses.length === 0)
-            return 0;
-        await this.prisma.artworksAddresses.deleteMany({
-            where: { artworkId },
-        });
-        const result = this.prisma.artworksAddresses.createMany({
-            data: addresses.map((address) => ({
-                address,
-                artworkId,
-            })),
-        });
-        return (await result).count;
-    }
-    async addresses(artwork) {
-        return this.prisma.artworksAddresses.findMany({
-            where: { artworkId: artwork.id },
-        });
-    }
     async overwriteColors(artworkId, colors) {
         if (!colors || colors.length === 0)
             return 0;
@@ -290,7 +286,8 @@ let ArtworksService = class ArtworksService {
 ArtworksService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        s3_service_1.S3Service])
+        s3_service_1.S3Service,
+        redis_service_1.RedisService])
 ], ArtworksService);
 exports.ArtworksService = ArtworksService;
 //# sourceMappingURL=artworks.service.js.map

@@ -43,5 +43,6 @@ import { EventsModule } from './events/events.module';
     EventsModule,
   ],
   controllers: [],
+  providers: [],
 })
 export class AppModule {}

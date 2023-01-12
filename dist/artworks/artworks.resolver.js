@@ -22,7 +22,6 @@ const find_artworks_input_1 = require("./dto/find-artworks.input");
 const favoriteArtwork_entity_1 = require("./entities/favoriteArtwork.entity");
 const artworkCollaborator_entity_1 = require("./entities/artworkCollaborator.entity");
 const artworkTag_entity_1 = require("./entities/artworkTag.entity");
-const artworkAddress_entity_1 = require("./entities/artworkAddress.entity");
 const artworkColor_entity_1 = require("./entities/artworkColor.entity");
 const artworkMovement_entity_1 = require("./entities/artworkMovement.entity");
 const artworkMaterial_entity_1 = require("./entities/artworkMaterial.entity");
@@ -40,6 +39,9 @@ let ArtworksResolver = class ArtworksResolver {
     }
     findAll(findArtworksInput) {
         return this.artworksService.findAll(findArtworksInput);
+    }
+    findByGeoRadius(jwt, radius) {
+        return this.artworksService.findByGeoRadius(jwt.userId, radius);
     }
     findOne(jwt, id) {
         return this.artworksService.findOne(jwt.userId, id);
@@ -61,9 +63,6 @@ let ArtworksResolver = class ArtworksResolver {
     }
     tags(artwork) {
         return this.artworksService.tags(artwork);
-    }
-    addresses(artwork) {
-        return this.artworksService.addresses(artwork);
     }
     colors(artwork) {
         return this.artworksService.colors(artwork);
@@ -94,6 +93,18 @@ __decorate([
     __metadata("design:paramtypes", [find_artworks_input_1.FindArtworksInput]),
     __metadata("design:returntype", void 0)
 ], ArtworksResolver.prototype, "findAll", null);
+__decorate([
+    (0, graphql_1.Query)(() => artwork_entity_1.Artwork, { name: 'artwork', nullable: true }),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, jwt_decorator_1.Jwt)()),
+    __param(1, (0, graphql_1.Args)('radius', {
+        type: () => graphql_1.Int,
+        description: `Maximum radius in meters for the geographical search`,
+    })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number]),
+    __metadata("design:returntype", void 0)
+], ArtworksResolver.prototype, "findByGeoRadius", null);
 __decorate([
     (0, graphql_1.Query)(() => artwork_entity_1.Artwork, { name: 'artwork', nullable: true }),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
@@ -147,13 +158,6 @@ __decorate([
     __metadata("design:paramtypes", [artwork_entity_1.Artwork]),
     __metadata("design:returntype", void 0)
 ], ArtworksResolver.prototype, "tags", null);
-__decorate([
-    (0, graphql_1.ResolveField)(() => [artworkAddress_entity_1.ArtworkAddress]),
-    __param(0, (0, graphql_1.Parent)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artwork_entity_1.Artwork]),
-    __metadata("design:returntype", void 0)
-], ArtworksResolver.prototype, "addresses", null);
 __decorate([
     (0, graphql_1.ResolveField)(() => [artworkColor_entity_1.ArtworkColor]),
     __param(0, (0, graphql_1.Parent)()),

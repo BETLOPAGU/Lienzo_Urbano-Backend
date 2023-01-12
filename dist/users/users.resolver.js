@@ -59,6 +59,9 @@ let UsersResolver = class UsersResolver {
     followersCount(user) {
         return this.usersService.followersCount(user);
     }
+    followedArtists(jwt) {
+        return this.usersService.followedArtists(jwt.userId);
+    }
     collections(user) {
         return this.usersService.collections(user);
     }
@@ -138,6 +141,14 @@ __decorate([
     __metadata("design:paramtypes", [user_entity_1.User]),
     __metadata("design:returntype", void 0)
 ], UsersResolver.prototype, "followersCount", null);
+__decorate([
+    (0, graphql_1.Query)(() => [user_entity_1.User]),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, jwt_decorator_1.Jwt)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UsersResolver.prototype, "followedArtists", null);
 __decorate([
     (0, graphql_1.ResolveField)(() => [collection_entity_1.Collection]),
     __param(0, (0, graphql_1.Parent)()),

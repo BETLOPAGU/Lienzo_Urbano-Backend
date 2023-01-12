@@ -15,7 +15,6 @@ import { FindArtworksInput } from './dto/find-artworks.input';
 import { FavoriteArtwork } from './entities/favoriteArtwork.entity';
 import { ArtworkCollaborator } from './entities/artworkCollaborator.entity';
 import { ArtworkTag } from './entities/artworkTag.entity';
-import { ArtworkAddress } from './entities/artworkAddress.entity';
 import { ArtworkColor } from './entities/artworkColor.entity';
 import { ArtworkMovement } from './entities/artworkMovement.entity';
 import { ArtworkMaterial } from './entities/artworkMaterial.entity';
@@ -45,6 +44,19 @@ export class ArtworksResolver {
     findArtworksInput?: FindArtworksInput,
   ) {
     return this.artworksService.findAll(findArtworksInput);
+  }
+
+  @Query(() => Artwork, { name: 'artwork', nullable: true })
+  @UseGuards(JwtAuthGuard)
+  findByGeoRadius(
+    @Jwt() jwt: JwtPayload,
+    @Args('radius', {
+      type: () => Int,
+      description: `Maximum radius in meters for the geographical search`,
+    })
+    radius: number,
+  ) {
+    return this.artworksService.findByGeoRadius(jwt.userId, radius);
   }
 
   @Query(() => Artwork, { name: 'artwork', nullable: true })
@@ -90,11 +102,6 @@ export class ArtworksResolver {
   @ResolveField(() => [ArtworkTag])
   tags(@Parent() artwork: Artwork) {
     return this.artworksService.tags(artwork);
-  }
-
-  @ResolveField(() => [ArtworkAddress])
-  addresses(@Parent() artwork: Artwork) {
-    return this.artworksService.addresses(artwork);
   }
 
   @ResolveField(() => [ArtworkColor])

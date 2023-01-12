@@ -18,6 +18,7 @@ let FindArtworksInput = class FindArtworksInput extends (0, graphql_1.PartialTyp
 __decorate([
     (0, graphql_1.Field)(() => String, {
         description: `Computes the Euclidean distance between this color ant the colors of all artworks`,
+        nullable: true,
     }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),

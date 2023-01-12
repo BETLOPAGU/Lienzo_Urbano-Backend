@@ -122,6 +122,33 @@ __decorate([
     __metadata("design:type", Number)
 ], Artwork.prototype, "maxWidth", void 0);
 __decorate([
+    (0, graphql_1.Field)(() => String, {
+        nullable: true,
+        description: `Address from the artwork`,
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], Artwork.prototype, "address", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float, {
+        nullable: true,
+        description: `Geo longitude from the address of the artwork`,
+    }),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], Artwork.prototype, "longitude", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float, {
+        nullable: true,
+        description: `Geo latitude from the address of the artwork`,
+    }),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], Artwork.prototype, "latitude", void 0);
+__decorate([
     (0, graphql_1.Field)(() => Date, {
         nullable: true,
         description: `Publication date of the artwork`,

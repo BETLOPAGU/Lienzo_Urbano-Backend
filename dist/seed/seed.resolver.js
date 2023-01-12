@@ -19,8 +19,8 @@ let SeedResolver = class SeedResolver {
     runSeed() {
         return this.seedService.populateDB();
     }
-    deleteDataFromDB() {
-        return this.seedService.deleteDataFromDB();
+    resetDataFromDB() {
+        return this.seedService.resetDataFromDB();
     }
 };
 __decorate([
@@ -31,12 +31,12 @@ __decorate([
 ], SeedResolver.prototype, "runSeed", null);
 __decorate([
     (0, graphql_1.Mutation)(() => Boolean, {
-        description: 'Method to delete the data in all the tables',
+        description: 'Method to reset the data from the DB (delete and then run the seed)',
     }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
-], SeedResolver.prototype, "deleteDataFromDB", null);
+], SeedResolver.prototype, "resetDataFromDB", null);
 SeedResolver = __decorate([
     (0, graphql_1.Resolver)(),
     __metadata("design:paramtypes", [seed_service_1.SeedService])

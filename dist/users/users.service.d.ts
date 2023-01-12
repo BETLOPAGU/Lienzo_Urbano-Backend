@@ -21,6 +21,7 @@ export declare class UsersService {
     rate(qualifierId: number, userId: number, rating: number): Promise<UserRating>;
     rating(user: User): Promise<number>;
     followUnfollow(followerId: number, userId: number): Promise<Follower>;
+    followedArtists(userId: number): Promise<User[]>;
     followers(user: User): Promise<Follower[]>;
     followersCount(user: User): Promise<number>;
     collections(user: User): Promise<Collection[]>;

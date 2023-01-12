@@ -85,6 +85,24 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "address", void 0);
 __decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float, {
+        nullable: true,
+        description: `Geo longitude from the home address of the user`,
+    }),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], User.prototype, "longitude", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float, {
+        nullable: true,
+        description: `Geo latitude from the home address of the user`,
+    }),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], User.prototype, "latitude", void 0);
+__decorate([
     (0, graphql_1.Field)(() => String, {
         nullable: true,
         description: `Contact information from the user`,

@@ -22,6 +22,8 @@ model users {
   gender                                       String?                 @db.VarChar(15)
   birthdate                                    DateTime?               @db.Date
   address                                      String?                 @db.VarChar(500)
+  latitude                                     Float?                  @db.Float
+  longitude                                    Float?                  @db.Float
   contact                                      String?                 @db.VarChar(500)
   photoUrl                                     String?                 @db.VarChar(100)
   googleUid                                    String?                 @db.VarChar(100)
@@ -61,12 +63,14 @@ model artworks {
   maxHeight             Float?                  @db.Float
   minWidth              Float?                  @db.Float
   maxWidth              Float?                  @db.Float
+  address               String?                 @db.VarChar(500)
+  latitude              Float?                  @db.Float
+  longitude             Float?                  @db.Float
   createdDate           DateTime?               @db.Date
   deletedDate           DateTime?               @db.Date
   isDeleted             Boolean?                @default(false)
   users                 users                   @relation(fields: [artistId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworks_ibfk_1")
   artworkCollections    artworkCollections[]
-  artworksAddresses     artworksAddresses[]
   artworksCollaborators artworksCollaborators[]
   artworksColors        artworksColors[]
   artworksMaterials     artworksMaterials[]
@@ -148,15 +152,6 @@ model commentsLikes {
 
   @@index([commentId], map: "commentId")
   @@index([userId], map: "userId")
-}
-
-model artworksAddresses {
-  id        Int      @id @default(autoincrement())
-  artworkId Int
-  address   String?  @db.VarChar(500)
-  artworks  artworks @relation(fields: [artworkId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "artworksaddresses_ibfk_1")
-
-  @@index([artworkId], map: "artworkId")
 }
 
 model artworksCollaborators {

@@ -6,6 +6,7 @@ import { Artwork } from '../entities/artwork.entity';
 export class FindArtworksInput extends PartialType(Artwork) {
   @Field(() => String, {
     description: `Computes the Euclidean distance between this color ant the colors of all artworks`,
+    nullable: true,
   })
   @IsString()
   @IsOptional()

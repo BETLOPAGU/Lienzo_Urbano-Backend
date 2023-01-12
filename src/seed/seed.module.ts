@@ -7,9 +7,10 @@ import { CollectionsModule } from '../collections/collections.module';
 import { CommentsModule } from '../comments/comments.module';
 import { ReportsModule } from '../reports/reports.module';
 import { PrismaService } from 'src/prisma.service';
+import { RedisService } from 'src/redis.service';
 
 @Module({
-  providers: [SeedResolver, SeedService, PrismaService],
+  providers: [SeedResolver, SeedService, PrismaService, RedisService],
   imports: [
     ArtworksModule,
     UsersModule,

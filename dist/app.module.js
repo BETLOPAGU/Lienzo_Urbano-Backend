@@ -52,6 +52,7 @@ AppModule = __decorate([
             events_module_1.EventsModule,
         ],
         controllers: [],
+        providers: [],
     })
 ], AppModule);
 exports.AppModule = AppModule;

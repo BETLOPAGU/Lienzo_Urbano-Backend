@@ -12,6 +12,9 @@ export declare class Artwork {
     maxHeight?: number;
     minWidth?: number;
     maxWidth?: number;
+    address?: string;
+    longitude?: number;
+    latitude?: number;
     createdDate?: Date;
     deletedDate?: Date;
     isDeleted?: boolean;

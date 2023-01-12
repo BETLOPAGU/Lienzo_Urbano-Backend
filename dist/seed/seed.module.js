@@ -16,11 +16,12 @@ const collections_module_1 = require("../collections/collections.module");
 const comments_module_1 = require("../comments/comments.module");
 const reports_module_1 = require("../reports/reports.module");
 const prisma_service_1 = require("../prisma.service");
+const redis_service_1 = require("../redis.service");
 let SeedModule = class SeedModule {
 };
 SeedModule = __decorate([
     (0, common_1.Module)({
-        providers: [seed_resolver_1.SeedResolver, seed_service_1.SeedService, prisma_service_1.PrismaService],
+        providers: [seed_resolver_1.SeedResolver, seed_service_1.SeedService, prisma_service_1.PrismaService, redis_service_1.RedisService],
         imports: [
             artworks_module_1.ArtworksModule,
             users_module_1.UsersModule,

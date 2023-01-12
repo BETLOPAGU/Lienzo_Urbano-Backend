@@ -11,9 +11,10 @@ export class SeedResolver {
   }
 
   @Mutation(() => Boolean, {
-    description: 'Method to delete the data in all the tables',
+    description:
+      'Method to reset the data from the DB (delete and then run the seed)',
   })
-  deleteDataFromDB() {
-    return this.seedService.deleteDataFromDB();
+  resetDataFromDB() {
+    return this.seedService.resetDataFromDB();
   }
 }

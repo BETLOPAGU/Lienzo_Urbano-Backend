@@ -12,11 +12,18 @@ const artworks_service_1 = require("./artworks.service");
 const artworks_resolver_1 = require("./artworks.resolver");
 const prisma_service_1 = require("../prisma.service");
 const s3_service_1 = require("../s3.service");
+const redis_service_1 = require("../redis.service");
 let ArtworksModule = class ArtworksModule {
 };
 ArtworksModule = __decorate([
     (0, common_1.Module)({
-        providers: [artworks_resolver_1.ArtworksResolver, artworks_service_1.ArtworksService, prisma_service_1.PrismaService, s3_service_1.S3Service],
+        providers: [
+            artworks_resolver_1.ArtworksResolver,
+            artworks_service_1.ArtworksService,
+            prisma_service_1.PrismaService,
+            s3_service_1.S3Service,
+            redis_service_1.RedisService,
+        ],
         exports: [artworks_service_1.ArtworksService],
     })
 ], ArtworksModule);

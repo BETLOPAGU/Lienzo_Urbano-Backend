@@ -20,5 +20,6 @@ export declare class UsersResolver {
     followUnfollowUser(jwt: JwtPayload, id: number): Promise<Follower>;
     followers(user: User): Promise<Follower[]>;
     followersCount(user: User): Promise<number>;
+    followedArtists(jwt: JwtPayload): Promise<User[]>;
     collections(user: User): Promise<Collection[]>;
 }

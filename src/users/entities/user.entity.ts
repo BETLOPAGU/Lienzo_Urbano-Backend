@@ -1,7 +1,8 @@
-import { ObjectType, Field, InputType, Int } from '@nestjs/graphql';
+import { ObjectType, Field, InputType, Int, Float } from '@nestjs/graphql';
 import {
   IsEmail,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   Max,
@@ -70,6 +71,22 @@ export class User {
   @IsString()
   @IsOptional()
   address?: string;
+
+  @Field(() => Float, {
+    nullable: true,
+    description: `Geo longitude from the home address of the user`,
+  })
+  @IsNumber()
+  @IsOptional()
+  longitude?: number;
+
+  @Field(() => Float, {
+    nullable: true,
+    description: `Geo latitude from the home address of the user`,
+  })
+  @IsNumber()
+  @IsOptional()
+  latitude?: number;
 
   @Field(() => String, {
     nullable: true,

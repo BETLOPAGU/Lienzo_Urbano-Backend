@@ -42,6 +42,15 @@ type Artwork {
   """Maximum width allowed to do the artwork"""
   maxWidth: Float
 
+  """Address from the artwork"""
+  address: String
+
+  """Geo longitude from the address of the artwork"""
+  longitude: Float
+
+  """Geo latitude from the address of the artwork"""
+  latitude: Float
+
   """Publication date of the artwork"""
   createdDate: DateTime
 
@@ -53,7 +62,6 @@ type Artwork {
   favoriteCount: Int!
   collaborators: [ArtworkCollaborator!]!
   tags: [ArtworkTag!]!
-  addresses: [ArtworkAddress!]!
   colors: [ArtworkColor!]!
   movements: [ArtworkMovement!]!
   materials: [ArtworkMaterial!]!
@@ -109,6 +117,12 @@ type User {
 
   """Home address from the user"""
   address: String
+
+  """Geo longitude from the home address of the user"""
+  longitude: Float
+
+  """Geo latitude from the home address of the user"""
+  latitude: Float
 
   """Contact information from the user"""
   contact: String
@@ -169,17 +183,6 @@ type ArtworkTag {
 
   """Tag assigned to the artwork"""
   tag: String!
-}
-
-type ArtworkAddress {
-  """ID from the record"""
-  id: Int!
-
-  """ID from the artwork"""
-  artworkId: Int!
-
-  """Address from the artwork"""
-  address: String!
 }
 
 type ArtworkColor {
@@ -423,6 +426,15 @@ input ArtworkInput {
   """Maximum width allowed to do the artwork"""
   maxWidth: Float
 
+  """Address from the artwork"""
+  address: String
+
+  """Geo longitude from the address of the artwork"""
+  longitude: Float
+
+  """Geo latitude from the address of the artwork"""
+  latitude: Float
+
   """Publication date of the artwork"""
   createdDate: DateTime
 
@@ -463,6 +475,12 @@ input UserType {
 
   """Home address from the user"""
   address: String
+
+  """Geo longitude from the home address of the user"""
+  longitude: Float
+
+  """Geo latitude from the home address of the user"""
+  latitude: Float
 
   """Contact information from the user"""
   contact: String
@@ -574,6 +592,7 @@ type Query {
   artwork(id: Int!): Artwork
   users(filters: FindUsersInput): [User!]!
   user(id: Int!): User
+  followedArtists: [User!]!
   notifications: [Notification!]!
   comments(userId: Int, artworkId: Int, commentId: Int): [Comment!]!
   chatConversation(userId: Int!): [Comment!]!
@@ -623,6 +642,15 @@ input FindArtworksInput {
   """Maximum width allowed to do the artwork"""
   maxWidth: Float
 
+  """Address from the artwork"""
+  address: String
+
+  """Geo longitude from the address of the artwork"""
+  longitude: Float
+
+  """Geo latitude from the address of the artwork"""
+  latitude: Float
+
   """Publication date of the artwork"""
   createdDate: DateTime
 
@@ -635,7 +663,7 @@ input FindArtworksInput {
   """
   Computes the Euclidean distance between this color ant the colors of all artworks
   """
-  color: String!
+  color: String
 }
 
 input FindUsersInput {
@@ -668,6 +696,12 @@ input FindUsersInput {
 
   """Home address from the user"""
   address: String
+
+  """Geo longitude from the home address of the user"""
+  longitude: Float
+
+  """Geo latitude from the home address of the user"""
+  latitude: Float
 
   """Contact information from the user"""
   contact: String
@@ -719,8 +753,8 @@ type Mutation {
   """Method to auto generate test data"""
   runSeed: Boolean!
 
-  """Method to delete the data in all the tables"""
-  deleteDataFromDB: Boolean!
+  """Method to reset the data from the DB (delete and then run the seed)"""
+  resetDataFromDB: Boolean!
   createCollection(createCollectionInput: CreateCollectionInput!): Collection!
   updateCollection(updateCollectionInput: UpdateCollectionInput!): Collection!
   removeCollection(id: Int!): Collection!
@@ -767,6 +801,15 @@ input CreateArtworkInput {
 
   """Maximum width allowed to do the artwork"""
   maxWidth: Float
+
+  """Address from the artwork"""
+  address: String
+
+  """Geo longitude from the address of the artwork"""
+  longitude: Float
+
+  """Geo latitude from the address of the artwork"""
+  latitude: Float
 
   """Publication date of the artwork"""
   createdDate: DateTime
@@ -830,6 +873,15 @@ input UpdateArtworkInput {
   """Maximum width allowed to do the artwork"""
   maxWidth: Float
 
+  """Address from the artwork"""
+  address: String
+
+  """Geo longitude from the address of the artwork"""
+  longitude: Float
+
+  """Geo latitude from the address of the artwork"""
+  latitude: Float
+
   """Publication date of the artwork"""
   createdDate: DateTime
 
@@ -889,6 +941,12 @@ input CreateUserInput {
   """Home address from the user"""
   address: String
 
+  """Geo longitude from the home address of the user"""
+  longitude: Float
+
+  """Geo latitude from the home address of the user"""
+  latitude: Float
+
   """Contact information from the user"""
   contact: String
 
@@ -944,6 +1002,12 @@ input UpdateUserInput {
 
   """Home address from the user"""
   address: String
+
+  """Geo longitude from the home address of the user"""
+  longitude: Float
+
+  """Geo latitude from the home address of the user"""
+  latitude: Float
 
   """Contact information from the user"""
   contact: String
@@ -1047,7 +1111,7 @@ input CreateEventInput {
 }
 
 type Subscription {
-  userNotifications: Notification!
+  userNotifications(userId: Int): Notification!
   globalNotifications: Notification!
   commentAdded(userId: Int, artworkId: Int, commentId: Int): Comment!
 }

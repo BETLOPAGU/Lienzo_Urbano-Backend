@@ -9,6 +9,8 @@ export declare class User {
     gender?: string;
     birthdate?: Date;
     address?: string;
+    longitude?: number;
+    latitude?: number;
     contact?: string;
     photoUrl?: string;
     googleUid?: string;

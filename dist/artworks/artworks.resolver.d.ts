@@ -6,7 +6,6 @@ import { FindArtworksInput } from './dto/find-artworks.input';
 import { FavoriteArtwork } from './entities/favoriteArtwork.entity';
 import { ArtworkCollaborator } from './entities/artworkCollaborator.entity';
 import { ArtworkTag } from './entities/artworkTag.entity';
-import { ArtworkAddress } from './entities/artworkAddress.entity';
 import { ArtworkColor } from './entities/artworkColor.entity';
 import { ArtworkMovement } from './entities/artworkMovement.entity';
 import { ArtworkMaterial } from './entities/artworkMaterial.entity';
@@ -17,6 +16,7 @@ export declare class ArtworksResolver {
     constructor(artworksService: ArtworksService);
     createArtwork(jwt: JwtPayload, createArtworkInput: CreateArtworkInput): Promise<Artwork>;
     findAll(findArtworksInput?: FindArtworksInput): Promise<Artwork[]>;
+    findByGeoRadius(jwt: JwtPayload, radius: number): Promise<Artwork[]>;
     findOne(jwt: JwtPayload, id: number): Promise<Artwork>;
     updateArtwork(updateArtworkInput: UpdateArtworkInput): Promise<Artwork>;
     removeArtwork(id: number): Promise<Artwork>;
@@ -24,7 +24,6 @@ export declare class ArtworksResolver {
     favoriteCount(artwork: Artwork): Promise<number>;
     collaborators(artwork: Artwork): Promise<ArtworkCollaborator[]>;
     tags(artwork: Artwork): Promise<ArtworkTag[]>;
-    addresses(artwork: Artwork): Promise<ArtworkAddress[]>;
     colors(artwork: Artwork): Promise<ArtworkColor[]>;
     movements(artwork: Artwork): Promise<ArtworkMovement[]>;
     materials(artwork: Artwork): Promise<ArtworkMaterial[]>;

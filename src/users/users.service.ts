@@ -153,6 +153,15 @@ export class UsersService {
     }
   }
 
+  async followedArtists(userId: number): Promise<User[]> {
+    const result = await this.prisma.followers.findMany({
+      where: { followerId: userId },
+      include: { users: true },
+    });
+    const followers = result.map((f) => f.users);
+    return followers;
+  }
+
   async followers(user: User): Promise<Follower[]> {
     const result = await this.prisma.followers.findMany({
       where: { userId: user.id },

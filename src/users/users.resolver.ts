@@ -87,6 +87,12 @@ export class UsersResolver {
     return this.usersService.followersCount(user);
   }
 
+  @Query(() => [User])
+  @UseGuards(JwtAuthGuard)
+  followedArtists(@Jwt() jwt: JwtPayload) {
+    return this.usersService.followedArtists(jwt.userId);
+  }
+
   @ResolveField(() => [Collection])
   collections(@Parent() user: User) {
     return this.usersService.collections(user);
