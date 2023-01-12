@@ -46,7 +46,7 @@ export class ArtworksResolver {
     return this.artworksService.findAll(findArtworksInput);
   }
 
-  @Query(() => Artwork, { name: 'artwork', nullable: true })
+  @Query(() => Artwork, { nullable: true })
   @UseGuards(JwtAuthGuard)
   findByGeoRadius(
     @Jwt() jwt: JwtPayload,

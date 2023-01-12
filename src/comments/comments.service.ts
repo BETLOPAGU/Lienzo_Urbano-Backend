@@ -137,17 +137,26 @@ export class CommentsService {
     });
   }
 
-  async listOfCommentedUsers(commentatorId: number): Promise<User[]> {
+  async listOfCommentedUsers(userId: number): Promise<User[]> {
     const comments = await this.prisma.comments.groupBy({
       by: ['userId'],
       where: {
-        AND: [{ commentatorId }, { NOT: [{ userId: null }] }],
+        AND: [{ commentatorId: userId }, { NOT: [{ userId: null }] }],
       },
     });
 
     return this.prisma.users.findMany({
       where: {
-        id: { in: comments.map((c) => c.userId) },
+        OR: [
+          {
+            id: { in: comments.map((c) => c.userId) },
+          },
+          {
+            id: {
+              gte: 0,
+            },
+          },
+        ],
       },
     });
   }

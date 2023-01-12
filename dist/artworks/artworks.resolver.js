@@ -94,7 +94,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ArtworksResolver.prototype, "findAll", null);
 __decorate([
-    (0, graphql_1.Query)(() => artwork_entity_1.Artwork, { name: 'artwork', nullable: true }),
+    (0, graphql_1.Query)(() => artwork_entity_1.Artwork, { nullable: true }),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, jwt_decorator_1.Jwt)()),
     __param(1, (0, graphql_1.Args)('radius', {
