@@ -48,7 +48,7 @@ export class ArtworksResolver {
 
   @Query(() => Artwork, { nullable: true })
   @UseGuards(JwtAuthGuard)
-  findByGeoRadius(
+  findArtworksByGeoRadius(
     @Jwt() jwt: JwtPayload,
     @Args('radius', {
       type: () => Int,
@@ -56,7 +56,7 @@ export class ArtworksResolver {
     })
     radius: number,
   ) {
-    return this.artworksService.findByGeoRadius(jwt.userId, radius);
+    return this.artworksService.findArtworksByGeoRadius(jwt.userId, radius);
   }
 
   @Query(() => Artwork, { name: 'artwork', nullable: true })

@@ -98,8 +98,10 @@ let ArtworksService = class ArtworksService {
         }
         return artworks;
     }
-    async findByGeoRadius(userId, radius) {
+    async findArtworksByGeoRadius(userId, radius) {
         const user = await this.prisma.users.findUnique({ where: { id: userId } });
+        if (!user)
+            return [];
         const artworkIds = await this.redisService.getArtworksOnRadius({
             longitude: user.longitude || -115.17258,
             latitude: user.latitude || 36.11996,

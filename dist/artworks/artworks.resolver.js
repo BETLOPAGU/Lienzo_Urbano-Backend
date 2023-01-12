@@ -40,8 +40,8 @@ let ArtworksResolver = class ArtworksResolver {
     findAll(findArtworksInput) {
         return this.artworksService.findAll(findArtworksInput);
     }
-    findByGeoRadius(jwt, radius) {
-        return this.artworksService.findByGeoRadius(jwt.userId, radius);
+    findArtworksByGeoRadius(jwt, radius) {
+        return this.artworksService.findArtworksByGeoRadius(jwt.userId, radius);
     }
     findOne(jwt, id) {
         return this.artworksService.findOne(jwt.userId, id);
@@ -104,7 +104,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Number]),
     __metadata("design:returntype", void 0)
-], ArtworksResolver.prototype, "findByGeoRadius", null);
+], ArtworksResolver.prototype, "findArtworksByGeoRadius", null);
 __decorate([
     (0, graphql_1.Query)(() => artwork_entity_1.Artwork, { name: 'artwork', nullable: true }),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

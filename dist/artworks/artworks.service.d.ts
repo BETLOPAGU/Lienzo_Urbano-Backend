@@ -27,7 +27,7 @@ export declare class ArtworksService {
     };
     create(artistId: number, createArtworkInput: CreateArtworkInput): Promise<Artwork>;
     findAll(findArtworksInput?: FindArtworksInput): Promise<Artwork[]>;
-    findByGeoRadius(userId: number, radius: number): Promise<Artwork[]>;
+    findArtworksByGeoRadius(userId: number, radius: number): Promise<Artwork[]>;
     findOne(userId: number, artworkId: number): Promise<Artwork>;
     update(id: number, updateArtworkInput: UpdateArtworkInput): Promise<Artwork>;
     remove(id: number): Promise<Artwork>;
