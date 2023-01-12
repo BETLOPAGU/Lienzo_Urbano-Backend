@@ -111,7 +111,7 @@ let CommentsService = class CommentsService {
                 ],
             },
             orderBy: {
-                id: 'desc',
+                id: 'asc',
             },
         });
     }
