@@ -143,14 +143,6 @@ let ArtworksService = class ArtworksService {
         });
     }
     async findOne(userId, artworkId) {
-        await this.prisma.events.create({
-            data: {
-                artworkId,
-                userId,
-                typeId: event_types_enum_1.EventTypes.VISIT,
-                createdDate: new Date(),
-            },
-        });
         return this.prisma.artworks.findUnique({ where: { id: artworkId } });
     }
     async update(id, updateArtworkInput) {

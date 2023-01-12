@@ -183,14 +183,14 @@ export class ArtworksService {
   }
 
   async findOne(userId: number, artworkId: number): Promise<Artwork> {
-    await this.prisma.events.create({
-      data: {
-        artworkId,
-        userId,
-        typeId: EventTypes.VISIT,
-        createdDate: new Date(),
-      },
-    });
+    // await this.prisma.events.create({
+    //   data: {
+    //     artworkId,
+    //     userId,
+    //     typeId: EventTypes.VISIT,
+    //     createdDate: new Date(),
+    //   },
+    // });
     return this.prisma.artworks.findUnique({ where: { id: artworkId } });
   }
 

@@ -17,7 +17,7 @@ export declare class ArtworksResolver {
     createArtwork(jwt: JwtPayload, createArtworkInput: CreateArtworkInput): Promise<Artwork>;
     findAll(findArtworksInput?: FindArtworksInput): Promise<Artwork[]>;
     findArtworksByGeoRadius(jwt: JwtPayload, radius: number): Promise<Artwork[]>;
-    findOne(jwt: JwtPayload, id: number): Promise<Artwork>;
+    findOne(id: number): Promise<Artwork>;
     updateArtwork(updateArtworkInput: UpdateArtworkInput): Promise<Artwork>;
     removeArtwork(id: number): Promise<Artwork>;
     markUnmarkFavoriteArtwork(jwt: JwtPayload, id: number): Promise<FavoriteArtwork>;

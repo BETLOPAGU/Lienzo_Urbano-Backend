@@ -60,9 +60,9 @@ export class ArtworksResolver {
   }
 
   @Query(() => Artwork, { name: 'artwork', nullable: true })
-  @UseGuards(JwtAuthGuard)
-  findOne(@Jwt() jwt: JwtPayload, @Args('id', { type: () => Int }) id: number) {
-    return this.artworksService.findOne(jwt.userId, id);
+  // @UseGuards(JwtAuthGuard)
+  findOne(@Args('id', { type: () => Int }) id: number) {
+    return this.artworksService.findOne(0, id);
   }
 
   @Mutation(() => Artwork)

@@ -116,7 +116,7 @@ let SeedService = class SeedService {
             createdDate: new Date(),
             gender: `Masculino`,
             phone: '5583957284',
-            photoUrl: 'https://instagram.fmex5-1.fna.fbcdn.net/v/t51.2885-19/269859382_217845217165904_808443587197205825_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fmex5-1.fna.fbcdn.net&_nc_cat=108&_nc_ohc=YZKA3RSRgLUAX9ES7ii&tn=yhMhqkVARt0UXrxL&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfDYsL6M9_RducGeEISKHNklZ8IRsUpBO_JPGUa9u3tQog&oe=63C5D9CA&_nc_sid=8fd12b',
+            photoUrl: 'https://enciclopedia.net/wp-content/uploads/2015/02/Artista.jpg',
             isDeleted: false,
         });
         await this.createSeedUser({
