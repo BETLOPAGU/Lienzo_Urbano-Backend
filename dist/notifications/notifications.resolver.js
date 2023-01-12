@@ -21,7 +21,6 @@ const jwt_decorator_1 = require("../auth/decorators/jwt.decorator");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const graphql_redis_subscriptions_1 = require("graphql-redis-subscriptions");
 const pubsub_module_1 = require("../pubsub/pubsub.module");
-const create_notification_input_1 = require("./dto/create-notification.input");
 let NotificationsResolver = class NotificationsResolver {
     constructor(notificationsService, pubSub) {
         this.notificationsService = notificationsService;
@@ -30,8 +29,8 @@ let NotificationsResolver = class NotificationsResolver {
     findAll(jwt) {
         return this.notificationsService.findAll(jwt.userId);
     }
-    createGlobalNotification(jwt, createNotificationInput) {
-        return this.notificationsService.createGlobalNotification(jwt.userId, createNotificationInput);
+    createGlobalNotification(jwt, title) {
+        return this.notificationsService.createGlobalNotification(jwt.userId, title);
     }
     markNotificationAsViewed(id) {
         return this.notificationsService.markNotificationAsViewed(id);
@@ -58,9 +57,9 @@ __decorate([
     (0, graphql_1.Mutation)(() => notification_entity_1.Notification),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, jwt_decorator_1.Jwt)()),
-    __param(1, (0, graphql_1.Args)('createNotificationInput')),
+    __param(1, (0, graphql_1.Args)('title', { type: () => String })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, create_notification_input_1.CreateNotificationInput]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], NotificationsResolver.prototype, "createGlobalNotification", null);
 __decorate([

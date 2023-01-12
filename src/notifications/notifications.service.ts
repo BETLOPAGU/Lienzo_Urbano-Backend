@@ -51,16 +51,16 @@ export class NotificationsService {
 
   async createGlobalNotification(
     userId: number,
-    createNotificationInput: CreateNotificationInput,
+    title: string,
   ): Promise<Notification> {
     const defaultType = NotificationTypes.SUCCESS;
 
     const notification = await this.prisma.notifications.create({
       data: {
         userId,
-        typeId: createNotificationInput.typeId || defaultType,
-        title: createNotificationInput.title || 'Notificación',
-        content: createNotificationInput.content,
+        typeId: defaultType,
+        title,
+        content: '',
         createdDate: new Date(),
       },
     });

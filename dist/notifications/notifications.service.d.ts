@@ -9,6 +9,6 @@ export declare class NotificationsService {
     create(createNotificationInput: CreateNotificationInput): Promise<Notification>;
     findAll(userId: number): Promise<Notification[]>;
     markNotificationAsViewed(id: number): Promise<Notification>;
-    createGlobalNotification(userId: number, createNotificationInput: CreateNotificationInput): Promise<Notification>;
+    createGlobalNotification(userId: number, title: string): Promise<Notification>;
     remove(id: number): Promise<Notification>;
 }

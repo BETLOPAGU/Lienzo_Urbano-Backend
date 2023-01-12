@@ -576,7 +576,8 @@ type Query {
   user(id: Int!): User
   notifications: [Notification!]!
   comments(userId: Int, artworkId: Int, commentId: Int): [Comment!]!
-  getListOfCommentedUsers: [User!]!
+  chatConversation(userId: Int!): [Comment!]!
+  listOfCommentedUsers: [User!]!
   reports(userId: Int, artworkId: Int, commentId: Int): [Report!]!
   login(loginInput: LoginInput!): AuthResponse!
   getArtworkRecommendations(numberOfRecommendations: Int): [Artwork!]!
@@ -711,6 +712,7 @@ type Mutation {
   removeUser(id: Int!): User!
   rateUser(id: Int!, rating: Int!): UserRating!
   followUnfollowUser(id: Int!): Follower!
+  createGlobalNotification(title: String!): Notification!
   markNotificationAsViewed(id: Int!): Notification!
   removeNotification(id: Int!): Notification!
 

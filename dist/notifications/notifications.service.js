@@ -48,14 +48,14 @@ let NotificationsService = class NotificationsService {
             where: { id },
         });
     }
-    async createGlobalNotification(userId, createNotificationInput) {
+    async createGlobalNotification(userId, title) {
         const defaultType = notification_types_enum_1.NotificationTypes.SUCCESS;
         const notification = await this.prisma.notifications.create({
             data: {
                 userId,
-                typeId: createNotificationInput.typeId || defaultType,
-                title: createNotificationInput.title || 'Notificación',
-                content: createNotificationInput.content,
+                typeId: defaultType,
+                title,
+                content: '',
                 createdDate: new Date(),
             },
         });

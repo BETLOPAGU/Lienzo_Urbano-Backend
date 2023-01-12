@@ -33,12 +33,11 @@ export class NotificationsResolver {
   @UseGuards(JwtAuthGuard)
   createGlobalNotification(
     @Jwt() jwt: JwtPayload,
-    @Args('createNotificationInput')
-    createNotificationInput: CreateNotificationInput,
+    @Args('title', { type: () => String }) title: string,
   ) {
     return this.notificationsService.createGlobalNotification(
       jwt.userId,
-      createNotificationInput,
+      title,
     );
   }
 
