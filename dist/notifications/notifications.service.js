@@ -60,7 +60,7 @@ let NotificationsService = class NotificationsService {
             },
         });
         this.pubSub.publish(`GLOBAL_NOTIFICATIONS`, {
-            userNotifications: notification,
+            globalNotifications: notification,
         });
         return notification;
     }
