@@ -138,9 +138,7 @@ export class ArtworksService {
 
     return this.prisma.artworks.findMany({
       where: {
-        id: {
-          in: artworkIds,
-        },
+        id: { in: artworkIds },
       },
     });
   }

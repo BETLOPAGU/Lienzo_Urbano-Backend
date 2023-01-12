@@ -589,6 +589,10 @@ input EventInput {
 
 type Query {
   artworks(filters: FindArtworksInput): [Artwork!]!
+  findArtworksByGeoRadius(
+    """Maximum radius in meters for the geographical search"""
+    radius: Int!
+  ): [Artwork!]
   artwork(id: Int!): Artwork
   users(filters: FindUsersInput): [User!]!
   user(id: Int!): User
