@@ -42,10 +42,19 @@ export class CommentsResolver {
     return this.commentsService.findAll({ userId, artworkId, commentId });
   }
 
+  @Query(() => [Comment])
+  @UseGuards(JwtAuthGuard)
+  chatConversation(
+    @Jwt() jwt: JwtPayload,
+    @Args('userId', { type: () => Int }) userId: number,
+  ) {
+    return this.commentsService.chatConversation(jwt.userId, userId);
+  }
+
   @Query(() => [User])
   @UseGuards(JwtAuthGuard)
-  getListOfCommentedUsers(@Jwt() jwt: JwtPayload) {
-    return this.commentsService.getListOfCommentedUsers(jwt.userId);
+  listOfCommentedUsers(@Jwt() jwt: JwtPayload) {
+    return this.commentsService.listOfCommentedUsers(jwt.userId);
   }
 
   @Mutation(() => Comment)
