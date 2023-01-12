@@ -38,8 +38,8 @@ let NotificationsResolver = class NotificationsResolver {
     removeNotification(id) {
         return this.notificationsService.remove(id);
     }
-    userNotifications(jwt) {
-        return this.pubSub.asyncIterator(`USER_NOTIFICATIONS_${jwt.userId}`);
+    userNotifications(userId) {
+        return this.pubSub.asyncIterator(`USER_NOTIFICATIONS_${userId}`);
     }
     globalNotifications() {
         return this.pubSub.asyncIterator('GLOBAL_NOTIFICATIONS');
@@ -78,10 +78,9 @@ __decorate([
 ], NotificationsResolver.prototype, "removeNotification", null);
 __decorate([
     (0, graphql_1.Subscription)(() => notification_entity_1.Notification),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    __param(0, (0, jwt_decorator_1.Jwt)()),
+    __param(0, (0, graphql_1.Args)('userId', { type: () => graphql_1.Int, nullable: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], NotificationsResolver.prototype, "userNotifications", null);
 __decorate([

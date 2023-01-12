@@ -10,6 +10,6 @@ export declare class NotificationsResolver {
     createGlobalNotification(jwt: JwtPayload, title: string): Promise<Notification>;
     markNotificationAsViewed(id: number): Promise<Notification>;
     removeNotification(id: number): Promise<Notification>;
-    userNotifications(jwt: JwtPayload): AsyncIterator<unknown, any, undefined>;
+    userNotifications(userId?: number): AsyncIterator<unknown, any, undefined>;
     globalNotifications(): AsyncIterator<unknown, any, undefined>;
 }

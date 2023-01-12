@@ -52,9 +52,10 @@ export class NotificationsResolver {
   }
 
   @Subscription(() => Notification)
-  @UseGuards(JwtAuthGuard)
-  userNotifications(@Jwt() jwt: JwtPayload) {
-    return this.pubSub.asyncIterator(`USER_NOTIFICATIONS_${jwt.userId}`);
+  userNotifications(
+    @Args('userId', { type: () => Int, nullable: true }) userId?: number,
+  ) {
+    return this.pubSub.asyncIterator(`USER_NOTIFICATIONS_${userId}`);
   }
 
   @Subscription(() => Notification)
