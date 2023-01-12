@@ -12,9 +12,11 @@
 #     - name: executing remote ssh commands using password
 #       uses: appleboy/ssh-action@master
 #       with:
-#         host: "34.229.0.219"
+#         host: "3.87.119.101"
 #         username: "ubuntu"
 #         key: ${{ secrets.EC2KEY }}
 #         port: 22
 #         script: |
 #           cd lienzo_urbano-backend
+#           git pull
+#           pm2 restart lienzo_urbano-backend

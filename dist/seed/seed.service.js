@@ -81,7 +81,8 @@ let SeedService = class SeedService {
     async createSeedUser(createUserInput) {
         console.log(createUserInput);
         const user = await this.usersService.create(createUserInput);
-        this.usersService.followUnfollow(user.id, await this.getRandomUserId());
+        const randomUserId = await this.getRandomUserId();
+        await this.usersService.followUnfollow(user.id, randomUserId);
     }
     async createSeedUsers() {
         await this.createSeedUser({
@@ -132,7 +133,12 @@ let SeedService = class SeedService {
     }
     async createSeedArtwork(createArtworkInput) {
         const artwork = await this.artworksService.create(await this.getRandomUserId(), createArtworkInput);
-        this.artworksService.markUnmarkFavorite(await this.getRandomUserId(), artwork.id);
+        await this.redisService.storeArtworkGeolocation({
+            artworkId: artwork.id,
+            latitude: artwork.latitude,
+            longitude: artwork.longitude,
+        });
+        await this.artworksService.markUnmarkFavorite(await this.getRandomUserId(), artwork.id);
         return artwork;
     }
     async createSeedArtworks() {
